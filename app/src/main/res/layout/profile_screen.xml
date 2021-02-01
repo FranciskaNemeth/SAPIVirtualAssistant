@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="@dimen/global_margin24"
+        android:src="@drawable/profile"
+        app:civ_border_color="@color/greenAccent"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewPencil"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_baseline_mode_24"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintBottom_toBottomOf="@+id/profileImage"
+        app:tint="@color/greenAccent"
+        tools:ignore="ContentDescription" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/global_margin24"
+        tools:layout_editor_absoluteX="172dp"
+        tools:layout_editor_absoluteY="222dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditTextUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/felhasznalanev"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/imageViewCalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/global_margin24"
+        android:src="@drawable/ic_baseline_calendar_today_24"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayoutEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textInputLayoutBirthDate"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutUserName"
+        tools:ignore="ContentDescription" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutBirthDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/global_margin24"
+        app:layout_constraintEnd_toStartOf="@id/imageViewCalendar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutUserName">
+
+        <EditText
+            android:id="@+id/editTextBirthDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/szuletesi_datum"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:enabled="false"
+            android:hint="@string/szuletesi_datum"
+            android:inputType="date" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutBirthDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/global_margin24">
+
+        <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email_cim"
+            android:background="@android:color/transparent"
+            android:autofillHints="@string/szuletesi_datum"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/global_margin24">
+
+        <EditText
+            android:id="@+id/editTextPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="phone"
+            android:hint="@string/telefonszam"
+            android:background="@android:color/transparent"
+            android:autofillHints="@string/szuletesi_datum"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/mentes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPhoneNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/global_margin64" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

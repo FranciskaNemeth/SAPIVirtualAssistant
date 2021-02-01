@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SAPI Virtual Assistant</string>
     <string name="oktato">Oktató</string>
     <string name="hallgato">Hallgató</string>
     <string name="vendeg">Vendég</string>
