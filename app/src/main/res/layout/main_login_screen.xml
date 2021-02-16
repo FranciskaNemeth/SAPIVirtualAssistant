@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/sapiLogo"
+        android:layout_width="100dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/margin32"
+        android:layout_marginEnd="@dimen/global_margin24"
+        android:src="@drawable/sapilogo"
+        app:layout_constraintBottom_toTopOf="@+id/buttonOktato"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <Button
+        android:id="@+id/buttonOktato"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/global_margin64"
+        android:layout_marginTop="@dimen/global_margin64"
+        android:layout_marginEnd="@dimen/global_margin64"
+        android:text="@string/oktato"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonHallgato"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sapiLogo" />
+
+    <Button
+        android:id="@+id/buttonHallgato"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/global_margin64"
+        android:layout_marginTop="@dimen/global_margin24"
+        android:layout_marginEnd="@dimen/global_margin64"
+        android:text="@string/hallgato"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonVendeg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOktato" />
+
+    <Button
+        android:id="@+id/buttonVendeg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonHallgato"
+        android:layout_marginTop="@dimen/global_margin24"
+        android:layout_marginStart="@dimen/global_margin64"
+        android:layout_marginEnd="@dimen/global_margin64"
+        android:layout_marginBottom="@dimen/global_margin64"
+        android:text="@string/vendeg"
+        android:textSize="16sp" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

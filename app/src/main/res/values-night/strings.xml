@@ -19,4 +19,7 @@
     <string name="mentes">Mentés</string>
     <string name="esemenyek">Események</string>
     <string name="esemenyek_listaja">Események listája</string>
+    <string name="oktato_vagy_hallgato">Oktató vagy Hallgató</string>
+    <string name="jelszo">Jelszó</string>
+    <string name="bejelentkezes">Bejelentkezés</string>
 </resources>
