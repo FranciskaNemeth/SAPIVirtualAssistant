@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/global_margin24"
+        app:layout_constraintBottom_toTopOf="@+id/buttonTopic1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonTopic1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/global_margin24"
+        android:text="@string/topic_1"
+        app:layout_constraintEnd_toStartOf="@+id/buttonTopic2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+    <Button
+        android:id="@+id/buttonTopic2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/buttonBetween8"
+        android:layout_marginEnd="@dimen/global_margin24"
+        android:text="@string/topic_2"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonTopic1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonTopic1" />
+
+    <Button
+        android:id="@+id/buttonTopic3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/global_margin24"
+        android:text="@string/topic_3"
+        app:layout_constraintEnd_toStartOf="@+id/buttonTopic4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTopic1" />
+
+    <Button
+        android:id="@+id/buttonTopic4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/buttonBetween8"
+        android:layout_marginEnd="@dimen/global_margin24"
+        android:text="@string/topic_4"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonTopic3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonTopic3" />
+
+    <TextView
+        android:id="@+id/textViewHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/global_margin24"
+        android:text="@string/lehetseges_felmerulo_kerdesek"
+        android:textColor="@color/greenAccent"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTopic3" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/buttonBetween8"
+        android:layout_marginTop="@dimen/buttonBetween8"
+        android:layout_marginBottom="@dimen/margin32"
+        android:background="@drawable/border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewHelp"
+        tools:listitem="@layout/listitem_help"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,4 +22,13 @@
     <string name="oktato_vagy_hallgato">Oktató vagy Hallgató</string>
     <string name="jelszo">Jelszó</string>
     <string name="bejelentkezes">Bejelentkezés</string>
+    <string name="topic_1">Topic 1</string>
+    <string name="topic_2">Topic 2</string>
+    <string name="topic_3">Topic 3</string>
+    <string name="topic_4">Topic 4</string>
+    <string name="ertekeles">Értékelés:</string>
+    <string name="uzenet">Üzenet</string>
+    <string name="kuldes">Küldés</string>
+    <string name="kerdes">Kérdés</string>
+    <string name="valasz">Válasz</string>
 </resources>
