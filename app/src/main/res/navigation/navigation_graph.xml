@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/mainLoginFragment">
+
+    <fragment
+        android:id="@+id/mainLoginFragment"
+        android:name="com.example.sapivirtualassistant.MainLoginFragment"
+        android:label="fragment_main_login"
+        tools:layout="@layout/main_login_screen" >
+        <action
+            android:id="@+id/action_mainLoginFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_mainLoginFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.sapivirtualassistant.MainLoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/login_screen" >
+        <action
+            android:id="@+id/action_loginFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.sapivirtualassistant.MainLoginFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/main_screen" >
+        <action
+            android:id="@+id/action_mainFragment_to_profileFragment2"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_navigationDrawerFragment"
+            app:destination="@id/navigationDrawerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.sapivirtualassistant.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/profile_screen" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.sapivirtualassistant.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/settings_screen" />
+    <fragment
+        android:id="@+id/navigationDrawerFragment"
+        android:name="com.example.sapivirtualassistant.NavigationDrawerFragment"
+        android:label="fragment_navigation_drawer"
+        tools:layout="@layout/navigation_drawer" >
+        <action
+            android:id="@+id/action_navigationDrawerFragment_to_timetableFragment"
+            app:destination="@id/timetableFragment" />
+        <action
+            android:id="@+id/action_navigationDrawerFragment_to_feedbackFragment"
+            app:destination="@id/feedbackFragment" />
+        <action
+            android:id="@+id/action_navigationDrawerFragment_to_helpFragment"
+            app:destination="@id/helpFragment" />
+        <action
+            android:id="@+id/action_navigationDrawerFragment_to_calendarFragment3"
+            app:destination="@id/calendarFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/timetableFragment"
+        android:name="com.example.sapivirtualassistant.TimetableFragment"
+        android:label="fragment_timetable"
+        tools:layout="@layout/timetable_screen" />
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.example.sapivirtualassistant.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/calendar_screen" />
+    <fragment
+        android:id="@+id/feedbackFragment"
+        android:name="com.example.sapivirtualassistant.FeedbackFragment"
+        android:label="fragment_feedback"
+        tools:layout="@layout/feedback_screen" />
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.example.sapivirtualassistant.HelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/help_screen" />
+</navigation>
