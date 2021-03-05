@@ -2,17 +2,17 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/mainScreenNav"
+        android:id="@+id/mainFragment"
         android:icon="@drawable/ic_baseline_home_24"
         tools:ignore="MenuTitle" />
 
     <item
-        android:id="@+id/profileNav"
+        android:id="@+id/profileFragment"
         android:icon="@drawable/ic_baseline_account_circle_24"
         tools:ignore="MenuTitle" />
 
     <item
-        android:id="@+id/favoriteNav"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_baseline_settings_24"
         tools:ignore="MenuTitle" />
 </menu>

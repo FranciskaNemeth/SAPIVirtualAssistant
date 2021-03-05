@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.navigation.Navigation
 
 class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +18,23 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.login_screen, container, false)
+        val view = inflater.inflate(R.layout.login_screen, container, false)
+
+        val buttonLogin : Button = view.findViewById(R.id.buttonLogin)
+        buttonLogin.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainFragment)
+        }
+
+        val buttonHelp : Button = view.findViewById(R.id.buttonHelp)
+        buttonHelp.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_helpFragment)
+        }
+
+        val buttonFeedback : Button = view.findViewById(R.id.buttonFeedback)
+        buttonFeedback.setOnClickListener{
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_feedbackFragment)
+        }
+
+        return view
     }
 }
