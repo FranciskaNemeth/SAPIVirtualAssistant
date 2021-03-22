@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SAPI Virtual Assistant</string>
     <string name="oktato">Oktató</string>
     <string name="hallgato">Hallgató</string>
     <string name="vendeg">Vendég</string>
@@ -26,7 +26,6 @@
     <string name="topic_2">Topic 2</string>
     <string name="topic_3">Topic 3</string>
     <string name="topic_4">Topic 4</string>
-    <string name="lehetseges_felmerulo_kerdesek">Lehetséges felmerülő kérdések</string>
     <string name="ertekeles">Értékelés:</string>
     <string name="uzenet">Üzenet</string>
     <string name="kuldes">Küldés</string>

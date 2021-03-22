@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mainScreenNav"
+        android:title="@string/orarend" />
+
+    <item
+        android:id="@+id/mainScreenNav1"
+        android:title="@string/naptar" />
+
+    <item
+        android:id="@+id/mainScreenNav2"
+        android:title="@string/asszisztens" />
+
+    <item
+        android:id="@+id/mainScreenNav3"
+        android:title="@string/profil_szerkesztese" />
+
+    <item
+        android:id="@+id/mainScreenNav4"
+        android:title="@string/beallitasok" />
+
+    <item
+        android:id="@+id/mainScreenNav5"
+        android:title="@string/sugo" />
+
+    <item
+        android:id="@+id/mainScreenNav6"
+        android:title="@string/visszajelzes" />
+
+    <item
+        android:id="@+id/mainScreenNav7"
+        android:title="@string/kijelentkezes" />
+</menu>
