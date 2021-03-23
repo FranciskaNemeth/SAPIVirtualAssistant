@@ -1,5 +1,6 @@
 package com.example.sapivirtualassistant
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -30,7 +31,7 @@ class MainLoginFragment : Fragment() {
 
         val buttonVendeg : Button = view.findViewById(R.id.buttonVendeg)
         buttonVendeg.setOnClickListener{
-            Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_mainFragment)
+            startActivity(Intent(context, MainActivity::class.java))
         }
 
         return view

@@ -1,9 +1,12 @@
 package com.example.sapivirtualassistant
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.view.Menu
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -15,6 +18,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var navController : NavController
@@ -35,14 +39,16 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.mainFragment -> showBottomNav()
+                R.id.mainFragment -> {
+                    showBottomNav()
+                }
                 else -> hideBottomNav()
             }
         }
 
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
-
         setupActionBarWithNavController(navController, appBarConfiguration)
+
         drawerNavView.setupWithNavController(navController)
         bottomNavView.setupWithNavController(navController)
     }
@@ -64,7 +70,22 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
         val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
-        logOut.setOnClickListener { finish() }
+        logOut.setOnClickListener {
+            finish()
+        }
+
+        val calendar : NavigationMenuItemView = findViewById(R.id.calendarFragment)
+        calendar.setOnClickListener {
+            val calendarUri: Uri = CalendarContract.CONTENT_URI
+                .buildUpon()
+                .appendPath("time")
+                .build()
+            startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+        }
         return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        return false
     }
 }

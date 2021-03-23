@@ -4,34 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
     app:startDestination="@id/mainFragment">
-    <!-- app:startDestination="@id/mainLoginFragment"> -->
-
-    <fragment
-        android:id="@+id/mainLoginFragment"
-        android:name="com.example.sapivirtualassistant.MainLoginFragment"
-        tools:layout="@layout/main_login_screen" >
-        <action
-            android:id="@+id/action_mainLoginFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_mainLoginFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.sapivirtualassistant.LoginFragment"
-        tools:layout="@layout/login_screen" >
-        <action
-            android:id="@+id/action_loginFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-        <action
-            android:id="@+id/action_loginFragment_to_feedbackFragment"
-            app:destination="@id/feedbackFragment" />
-        <action
-            android:id="@+id/action_loginFragment_to_helpFragment"
-            app:destination="@id/helpFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/mainFragment"
@@ -68,10 +40,12 @@
         android:id="@+id/timetableFragment"
         android:name="com.example.sapivirtualassistant.TimetableFragment"
         tools:layout="@layout/timetable_screen" />
+    <!--
     <fragment
         android:id="@+id/calendarFragment"
         android:name="com.example.sapivirtualassistant.CalendarFragment"
         tools:layout="@layout/calendar_screen" />
+        -->
     <fragment
         android:id="@+id/feedbackFragment"
         android:name="com.example.sapivirtualassistant.FeedbackFragment"
