@@ -75,9 +75,10 @@
             android:autofillHints="@string/szuletesi_datum"
             android:background="@android:color/transparent"
             android:ems="10"
-            android:enabled="false"
+            android:focusable="false"
             android:hint="@string/szuletesi_datum"
-            android:inputType="date" />
+            android:inputType="date"
+            android:textColor="@android:color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
