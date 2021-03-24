@@ -50,6 +50,20 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             Calendar.getInstance().get(Calendar.MONTH),
             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         )
+
+        val currentDay = Date()
+        val c = Calendar.getInstance()
+
+        c.time = currentDay
+        c.add(Calendar.YEAR, -17)
+
+        val maxYear = c.get(1)
+
+        c.set(maxYear, 11, 31)
+        
+        val maxDate = c.time.time
+
+        datePickerDialog.datePicker.maxDate = maxDate
         datePickerDialog.show()
     }
 
