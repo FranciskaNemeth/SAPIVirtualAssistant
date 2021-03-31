@@ -1,12 +1,13 @@
-package com.example.sapivirtualassistant
+package com.example.sapivirtualassistant.fragment
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.example.sapivirtualassistant.R
 
-class CalendarFragment : Fragment() {
+class SettingsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -16,7 +17,6 @@ class CalendarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.calendar_screen, container, false)
-        return view
+        return inflater.inflate(R.layout.settings_screen, container, false)
     }
 }

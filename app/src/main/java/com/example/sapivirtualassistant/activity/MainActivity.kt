@@ -1,4 +1,4 @@
-package com.example.sapivirtualassistant
+package com.example.sapivirtualassistant.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -15,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.sapivirtualassistant.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView

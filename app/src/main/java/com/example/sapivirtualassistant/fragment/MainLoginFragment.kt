@@ -1,4 +1,4 @@
-package com.example.sapivirtualassistant
+package com.example.sapivirtualassistant.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.Navigation
+import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.activity.MainActivity
 
 class MainLoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {

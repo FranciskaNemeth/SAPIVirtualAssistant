@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/mainLoginFragment"
-        android:name="com.example.sapivirtualassistant.MainLoginFragment"
+        android:name="com.example.sapivirtualassistant.fragment.MainLoginFragment"
         tools:layout="@layout/main_login_screen" >
         <action
             android:id="@+id/action_mainLoginFragment_to_loginFragment"
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.sapivirtualassistant.LoginFragment"
+        android:name="com.example.sapivirtualassistant.fragment.LoginFragment"
         tools:layout="@layout/login_screen" >
         <action
             android:id="@+id/action_loginFragment_to_helpFragment"
@@ -29,10 +29,10 @@
 
     <fragment
         android:id="@+id/feedbackFragment"
-        android:name="com.example.sapivirtualassistant.FeedbackFragment"
+        android:name="com.example.sapivirtualassistant.fragment.FeedbackFragment"
         tools:layout="@layout/feedback_screen" />
     <fragment
         android:id="@+id/helpFragment"
-        android:name="com.example.sapivirtualassistant.HelpFragment"
+        android:name="com.example.sapivirtualassistant.fragment.HelpFragment"
         tools:layout="@layout/help_screen" />
 </navigation>
