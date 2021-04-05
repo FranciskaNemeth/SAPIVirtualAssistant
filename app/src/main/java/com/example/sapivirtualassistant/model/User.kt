@@ -73,4 +73,15 @@ class User(userType : Int, profilePicture: String?, userName: String, emailAddre
     override fun toString(): String {
         return "$userType $userName $emailAddress $phoneNumber $birthDay"
     }
+
+    fun userToHashMapOf() : HashMap<String, Any?> {
+        return hashMapOf(
+            "userType" to this.userType,
+            "userName" to this.userName,
+            "emailAddress" to this.emailAddress,
+            "phoneNumber" to this.phoneNumber,
+            "birthDay" to this.birthDay,
+            "profilePicture" to this.profilePicture
+        )
+    }
 }
