@@ -12,9 +12,9 @@
         <action
             android:id="@+id/action_mainFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
-        <action
+        <!--<action
             android:id="@+id/action_mainFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/calendarFragment" /> -->
         <action
             android:id="@+id/action_mainFragment_to_feedbackFragment"
             app:destination="@id/feedbackFragment" />
@@ -24,18 +24,14 @@
         <action
             android:id="@+id/action_mainFragment_to_timetableFragment"
             app:destination="@id/timetableFragment" />
-        <action
+        <!-- <action
             android:id="@+id/action_mainFragment_to_calendarFragment"
-            app:destination="@id/calendarFragment" />
+            app:destination="@id/calendarFragment" /> -->
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.sapivirtualassistant.fragment.ProfileFragment"
         tools:layout="@layout/profile_screen" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.sapivirtualassistant.fragment.SettingsFragment"
-        tools:layout="@layout/settings_screen" />
     <fragment
         android:id="@+id/timetableFragment"
         android:name="com.example.sapivirtualassistant.fragment.TimetableFragment"

@@ -16,6 +16,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.sapivirtualassistant.R
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView
@@ -83,6 +84,16 @@ class MainActivity : AppCompatActivity() {
                 .build()
             startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
         }
+
+        val cal : BottomNavigationItemView = findViewById(R.id.calFragment)
+        cal.setOnClickListener {
+            val calendarUri: Uri = CalendarContract.CONTENT_URI
+                .buildUpon()
+                .appendPath("time")
+                .build()
+            startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+        }
+
         return true
     }
 

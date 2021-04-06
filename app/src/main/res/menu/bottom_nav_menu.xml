@@ -12,7 +12,7 @@
         tools:ignore="MenuTitle" />
 
     <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_baseline_settings_24"
+        android:id="@+id/calFragment"
+        android:icon="@drawable/ic_baseline_calendar_today_24"
         tools:ignore="MenuTitle" />
 </menu>
