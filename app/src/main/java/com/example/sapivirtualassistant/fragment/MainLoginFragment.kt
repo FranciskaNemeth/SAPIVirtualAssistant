@@ -10,10 +10,27 @@ import android.widget.Button
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.MainActivity
+import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.interfaces.GetUserInterface
+import com.example.sapivirtualassistant.model.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainLoginFragment : Fragment() {
+    private lateinit var auth : FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Firebase Auth
+        auth = Firebase.auth
+
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            DatabaseManager.getUserData(currentUser.email!!)
+            startActivity(Intent(context, MainActivity::class.java))
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -94,11 +94,12 @@
             android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:hint="@string/email_cim"
             android:background="@android:color/transparent"
-            android:autofillHints="@string/szuletesi_datum"/>
+            android:ems="10"
+            android:focusable="false"
+            android:hint="@string/email_cim"
+            android:inputType="textEmailAddress"
+            android:autofillHints="@string/email_cim" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -122,6 +123,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:id="@+id/buttonSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/mentes"

@@ -1,25 +1,39 @@
 package com.example.sapivirtualassistant.activity
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.database.DatabaseManager
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import org.w3c.dom.Text
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout : DrawerLayout
     lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var drawerNavView : NavigationView
+    private lateinit var auth : FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +68,10 @@ class MainActivity : AppCompatActivity() {
 
         drawerNavView.setupWithNavController(navController)
         bottomNavView.setupWithNavController(navController)
+
+        /*val headerLayout: View = drawerNavView.inflateHeaderView(R.layout.header)
+        val uName = headerLayout.findViewById<TextView>(R.id.textViewName)
+        uName.text = DatabaseManager.user.userName*/
     }
 
     private fun showBottomNav() {
@@ -73,7 +92,13 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
         val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
         logOut.setOnClickListener {
-            finish()
+            auth = Firebase.auth
+
+            val currentUser = auth.currentUser
+            if(currentUser != null) {
+                FirebaseAuth.getInstance().signOut()
+                finish()
+            }
         }
 
         val calendar : NavigationMenuItemView = findViewById(R.id.calendarFragment)

@@ -1,6 +1,7 @@
 package com.example.sapivirtualassistant.model
 
-class User(userType : Int, profilePicture: String?, userName: String, emailAddress: String, phoneNumber: String, birthDay: String) {
+class User(userType : Int, profilePicture: String?, userName: String, emailAddress: String, phoneNumber: String?, birthDay: String?) {
+
     var userType : Int = userType  // 0 -> oktato, 1 -> hallgato
         set(value) {
             if (value == 0 || value == 1) {
@@ -41,9 +42,9 @@ class User(userType : Int, profilePicture: String?, userName: String, emailAddre
             }
         }
 
-    var phoneNumber : String = phoneNumber
+    var phoneNumber : String? = phoneNumber
         set(value) {
-            if (value.isNotEmpty() && isValidPhoneNumber(value)) {
+            if (value == null || value.isNotEmpty() && isValidPhoneNumber(value)) {
                 field = value
             }
             else {
@@ -51,9 +52,9 @@ class User(userType : Int, profilePicture: String?, userName: String, emailAddre
             }
         }
 
-    var birthDay : String = birthDay
+    var birthDay : String? = birthDay
         set(value) {
-            if (value.isNotEmpty()) {
+            if (value == null || value.isNotEmpty()) {
                 field = value
             }
             else {
@@ -84,4 +85,5 @@ class User(userType : Int, profilePicture: String?, userName: String, emailAddre
             "profilePicture" to this.profilePicture
         )
     }
+
 }
