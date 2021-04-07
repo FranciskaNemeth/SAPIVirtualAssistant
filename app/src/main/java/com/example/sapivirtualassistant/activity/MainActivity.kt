@@ -67,22 +67,25 @@ class MainActivity : AppCompatActivity() {
 
 
         val auth : FirebaseAuth = Firebase.auth
-        DatabaseManager.getUserData(auth.currentUser!!.email!!, object : GetUserInterface {
-            override fun getUser(user: User) {
-                val headerView = drawerNavView.getHeaderView(0)
-                val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
-                val navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
-                navUsername.text = user.userName
-                val ref = Firebase.storage.reference.child("images/" + user.emailAddress + ".jpg")
-                var imgURL: String?
-                ref.downloadUrl.addOnSuccessListener { Uri ->
-                    imgURL = Uri.toString()
-                    Glide.with(this@MainActivity)
-                        .load(imgURL)
-                        .into(navUserProfile)
+        if(auth.currentUser != null) {
+            DatabaseManager.getUserData(auth.currentUser!!.email!!, object : GetUserInterface {
+                override fun getUser(user: User) {
+                    val headerView = drawerNavView.getHeaderView(0)
+                    val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
+                    val navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
+                    navUsername.text = user.userName
+                    val ref = Firebase.storage.reference.child("images/" + user.emailAddress + ".jpg")
+                    var imgURL: String?
+                    ref.downloadUrl.addOnSuccessListener { Uri ->
+                        imgURL = Uri.toString()
+                        Glide.with(this@MainActivity)
+                            .load(imgURL)
+                            .into(navUserProfile)
+                    }
                 }
-            }
-        })
+            })
+        }
+
     }
 
     private fun showBottomNav() {
