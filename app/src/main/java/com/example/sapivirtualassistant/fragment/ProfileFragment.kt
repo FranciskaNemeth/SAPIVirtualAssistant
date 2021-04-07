@@ -2,14 +2,12 @@ package com.example.sapivirtualassistant.fragment
 
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,15 +15,14 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.database.DatabaseManager
-import com.example.sapivirtualassistant.interfaces.GetUserInterface
 import com.example.sapivirtualassistant.model.User
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import de.hdodenhof.circleimageview.CircleImageView
@@ -41,11 +38,11 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     lateinit var phoneNumber : EditText
     lateinit var profilePicture : CircleImageView
     lateinit var pencilButton : ImageView
-    val db = Firebase.firestore
     lateinit var user : User
     lateinit var buttonSave : Button
     private var imageUri: Uri? = null
     val storage = Firebase.storage
+    var imgURL : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,13 +86,20 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             startActivityForResult(gallery, 100)
         }
 
-        val gsReference = storage.getReferenceFromUrl("gs://sapivirtualassistant.appspot.com/" + user.emailAddress + ".jpg")
-        Glide.with(requireActivity())
-            .load(gsReference)
-            .into(profilePicture)
+        profilePicture.setOnClickListener {
+            showPicture()
+        }
+
+        val ref = storage.reference.child("images/" + user.emailAddress + ".jpg")
+        ref.downloadUrl.addOnSuccessListener { Uri ->
+            imgURL = Uri.toString()
+            Glide.with(requireActivity())
+                .load(imgURL)
+                .into(profilePicture)
+        }
 
         buttonSave.setOnClickListener {
-            val u  = User(user.userType, null, userName.text.toString(), user.emailAddress, phoneNumber.text.toString(), datePickerText.text.toString())
+            val u  = User(user.userType, imgURL, userName.text.toString(), user.emailAddress, phoneNumber.text.toString(), datePickerText.text.toString())
             DatabaseManager.updateUserData(u)
             requireActivity().onBackPressed()
         }
@@ -103,25 +107,41 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         return view
     }
 
+    fun showPicture() {
+        val alertadd = AlertDialog.Builder(requireContext())
+        val factory = LayoutInflater.from(requireContext())
+        val view: View = factory.inflate(R.layout.image_dialog, null)
+        val img = view.findViewById<ImageView>(R.id.imageDialog)
+        Glide.with(requireActivity())
+            .load(imgURL)
+            .into(img)
+        alertadd.setView(view)
+        alertadd.setNeutralButton("Bezár!") { _, _ ->
+
+        }
+
+        alertadd.show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        //super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
             imageUri = data?.data
             profilePicture.setImageURI(imageUri)
             val storageRef = storage.reference
-            val mountainsRef = storageRef.child(user.emailAddress + ".jpg")
-            profilePicture.isDrawingCacheEnabled = true
-            profilePicture.buildDrawingCache()
+            val mountainsRef = storageRef.child("images/" + user.emailAddress + ".jpg")
+            //profilePicture.isDrawingCacheEnabled = true
+            //profilePicture.buildDrawingCache()
             val bitmap = (profilePicture.drawable as BitmapDrawable).bitmap
             val baos = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val data = baos.toByteArray()
+            val dataB = baos.toByteArray()
 
-            val uploadTask = mountainsRef.putBytes(data)
+            val uploadTask = mountainsRef.putBytes(dataB)
             uploadTask.addOnFailureListener {
                 // Handle unsuccessful uploads
             }.addOnSuccessListener { taskSnapshot ->
-                user.profilePicture = data.toString()
+                user.profilePicture = dataB.toString()
             }
         }
     }

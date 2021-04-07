@@ -12,14 +12,15 @@ import com.google.firebase.ktx.Firebase
 object DatabaseManager {
     lateinit var user : User
 
-    fun getUserData(email : String) {
+    fun getUserData(email : String, getUserInterface : GetUserInterface? = null) {
         Firebase.firestore.collection("users").document(email)
             .get()
             .addOnSuccessListener { document ->
                 user = mapToUser(document.data!!)
+                getUserInterface?.getUser(user)
             }
             .addOnFailureListener { exception ->
-                Log.w("TAG", "Error getting documents: ", exception)
+                Log.d("TAG", "Error getting documents: ", exception)
             }
     }
 
@@ -43,5 +44,4 @@ object DatabaseManager {
                     birthDay = map["birthDay"] as String?
         )
     }
-
 }

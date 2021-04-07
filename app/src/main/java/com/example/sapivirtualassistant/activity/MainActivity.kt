@@ -1,39 +1,35 @@
 package com.example.sapivirtualassistant.activity
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.interfaces.GetUserInterface
+import com.example.sapivirtualassistant.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import org.w3c.dom.Text
+import com.google.firebase.storage.ktx.storage
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class MainActivity : AppCompatActivity() {
@@ -69,9 +65,24 @@ class MainActivity : AppCompatActivity() {
         drawerNavView.setupWithNavController(navController)
         bottomNavView.setupWithNavController(navController)
 
-        /*val headerLayout: View = drawerNavView.inflateHeaderView(R.layout.header)
-        val uName = headerLayout.findViewById<TextView>(R.id.textViewName)
-        uName.text = DatabaseManager.user.userName*/
+
+        val auth : FirebaseAuth = Firebase.auth
+        DatabaseManager.getUserData(auth.currentUser!!.email!!, object : GetUserInterface {
+            override fun getUser(user: User) {
+                val headerView = drawerNavView.getHeaderView(0)
+                val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
+                val navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
+                navUsername.text = user.userName
+                val ref = Firebase.storage.reference.child("images/" + user.emailAddress + ".jpg")
+                var imgURL: String?
+                ref.downloadUrl.addOnSuccessListener { Uri ->
+                    imgURL = Uri.toString()
+                    Glide.with(this@MainActivity)
+                        .load(imgURL)
+                        .into(navUserProfile)
+                }
+            }
+        })
     }
 
     private fun showBottomNav() {
