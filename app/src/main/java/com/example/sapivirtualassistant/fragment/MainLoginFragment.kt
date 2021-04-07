@@ -7,12 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.MainActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
-import com.example.sapivirtualassistant.interfaces.GetUserInterface
-import com.example.sapivirtualassistant.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -40,17 +41,18 @@ class MainLoginFragment : Fragment() {
 
         val buttonOktato : Button = view.findViewById(R.id.buttonOktato)
         buttonOktato.setOnClickListener {
+            setFragmentResult("requestKey", bundleOf("name" to "Oktató"))
             Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_loginFragment)
         }
 
         val buttonHallgato : Button = view.findViewById(R.id.buttonHallgato)
         buttonHallgato.setOnClickListener {
+            setFragmentResult("requestKey", bundleOf("name" to "Hallgató"))
             Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_loginFragment)
         }
 
         val buttonVendeg : Button = view.findViewById(R.id.buttonVendeg)
         buttonVendeg.setOnClickListener{
-            //startActivityForResult(Intent(context, MainActivity::class.java), 500)
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtra("Guest", true)
             startActivity(intent)

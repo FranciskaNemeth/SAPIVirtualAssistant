@@ -2,20 +2,20 @@ package com.example.sapivirtualassistant.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.MainActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
-import com.example.sapivirtualassistant.interfaces.GetUserInterface
-import com.example.sapivirtualassistant.model.User
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -40,6 +40,12 @@ class LoginFragment : Fragment() {
 
         val emailEditText : TextInputEditText = view.findViewById(R.id.textInputEditTextUserName)
         val pwdEditText : TextInputEditText = view.findViewById(R.id.textInputEditTextPassword)
+        val oktatoVagyHallgatoTextView : TextView = view.findViewById(R.id.textView)
+
+        setFragmentResultListener("requestKey") { key, bundle ->
+            val result = bundle.getString("name")
+            oktatoVagyHallgatoTextView.text = result
+        }
 
         val buttonLogin : Button = view.findViewById(R.id.buttonLogin)
         buttonLogin.setOnClickListener {

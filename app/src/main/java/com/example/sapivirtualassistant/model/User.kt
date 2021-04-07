@@ -1,6 +1,6 @@
 package com.example.sapivirtualassistant.model
 
-class User(userType : Int, profilePicture: String?, userName: String, emailAddress: String, phoneNumber: String?, birthDay: String?) {
+class User(userType : Int, profilePicture: String?, userName: String, emailAddress: String, phoneNumber: String?, birthDay: String?, className : String?, classGrade : String?, classGroup : String?, teacherTimeTable : String?) {
 
     var userType : Int = userType  // 0 -> oktato, 1 -> hallgato
         set(value) {
@@ -62,6 +62,14 @@ class User(userType : Int, profilePicture: String?, userName: String, emailAddre
             }
         }
 
+    var className : String? = className
+
+    var classGrade : String? = classGrade
+
+    var classGroup : String? = classGroup
+
+    var teacherTimeTable : String? = teacherTimeTable
+
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
@@ -82,7 +90,11 @@ class User(userType : Int, profilePicture: String?, userName: String, emailAddre
             "emailAddress" to this.emailAddress,
             "phoneNumber" to this.phoneNumber,
             "birthDay" to this.birthDay,
-            "profilePicture" to this.profilePicture
+            "profilePicture" to this.profilePicture,
+            "className" to this.className,
+            "classGrade" to this.classGrade,
+            "classGroup" to this.classGroup,
+            "teacherTimeTable" to this.teacherTimeTable
         )
     }
 

@@ -15,6 +15,8 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -81,9 +83,36 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             showDatePickerDialog()
         }
 
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                result: ActivityResult ->
+            if (result.resultCode == RESULT_OK) {
+                val intent = result.data
+                // Handle the Intent
+                //do stuff here
+                imageUri = intent?.data
+                profilePicture.setImageURI(imageUri)
+                val storageRef = storage.reference
+                val mountainsRef = storageRef.child("images/" + user.emailAddress + ".jpg")
+                //profilePicture.isDrawingCacheEnabled = true
+                //profilePicture.buildDrawingCache()
+                val bitmap = (profilePicture.drawable as BitmapDrawable).bitmap
+                val baos = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val dataB = baos.toByteArray()
+
+                val uploadTask = mountainsRef.putBytes(dataB)
+                uploadTask.addOnFailureListener {
+                    // Handle unsuccessful uploads
+                }.addOnSuccessListener { taskSnapshot ->
+                    user.profilePicture = dataB.toString()
+                }
+            }
+        }
+
         pencilButton.setOnClickListener {
             val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            startActivityForResult(gallery, 100)
+            startForResult.launch(gallery)
+            //startActivityForResult(gallery, 100)
         }
 
         profilePicture.setOnClickListener {
@@ -99,7 +128,7 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
 
         buttonSave.setOnClickListener {
-            val u  = User(user.userType, imgURL, userName.text.toString(), user.emailAddress, phoneNumber.text.toString(), datePickerText.text.toString())
+            val u  = User(user.userType, imgURL, userName.text.toString(), user.emailAddress, phoneNumber.text.toString(), datePickerText.text.toString(), user.className, user.classGrade, user.classGroup, user.teacherTimeTable)
             DatabaseManager.updateUserData(u)
             requireActivity().onBackPressed()
         }
@@ -107,23 +136,23 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         return view
     }
 
-    fun showPicture() {
-        val alertadd = AlertDialog.Builder(requireContext())
+    private fun showPicture() {
+        val alertAdd = AlertDialog.Builder(requireContext())
         val factory = LayoutInflater.from(requireContext())
         val view: View = factory.inflate(R.layout.image_dialog, null)
         val img = view.findViewById<ImageView>(R.id.imageDialog)
         Glide.with(requireActivity())
             .load(imgURL)
             .into(img)
-        alertadd.setView(view)
-        alertadd.setNeutralButton("Bezár!") { _, _ ->
+        alertAdd.setView(view)
+        alertAdd.setNeutralButton("Bezár!") { _, _ ->
 
         }
 
-        alertadd.show()
+        alertAdd.show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == 100) {
             imageUri = data?.data
@@ -144,9 +173,9 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 user.profilePicture = dataB.toString()
             }
         }
-    }
+    }*/
 
-    fun showDatePickerDialog() {
+    private fun showDatePickerDialog() {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             this,
