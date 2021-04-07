@@ -64,6 +64,13 @@ class LoginFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_feedbackFragment)
         }
 
+        val buttonForgotPassword : Button = view.findViewById(R.id.buttonForgotPwd)
+        buttonForgotPassword.setOnClickListener {
+            if (isValidEmail(emailEditText.text.toString())) {
+                forgotPassword(emailEditText.text.toString())
+            }
+        }
+
         return view
     }
 
@@ -83,6 +90,16 @@ class LoginFragment : Fragment() {
                     //updateUI(null)
                 }
             }
+    }
+
+    fun forgotPassword(email : String) {
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(requireActivity(), "Ellenőrizze az e-mailjeit!", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(requireActivity(), "Próbálja meg újra!", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun isValidEmail(email: String): Boolean {
