@@ -50,7 +50,10 @@ class MainLoginFragment : Fragment() {
 
         val buttonVendeg : Button = view.findViewById(R.id.buttonVendeg)
         buttonVendeg.setOnClickListener{
-            startActivity(Intent(context, MainActivity::class.java))
+            //startActivityForResult(Intent(context, MainActivity::class.java), 500)
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("Guest", true)
+            startActivity(intent)
         }
 
         return view

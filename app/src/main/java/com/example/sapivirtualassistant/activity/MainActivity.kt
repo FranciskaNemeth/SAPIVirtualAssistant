@@ -1,12 +1,16 @@
 package com.example.sapivirtualassistant.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.TextView
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout
@@ -38,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout : DrawerLayout
     lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var drawerNavView : NavigationView
+    lateinit var toolBar : Toolbar
     private lateinit var auth : FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +91,13 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
+        val isGuest = intent.getBooleanExtra("Guest", false)
+        if (isGuest) {
+            hideDrawerMenu()
+            hideBottomNav()
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setHomeButtonEnabled(false)
+        }
     }
 
     private fun showBottomNav() {
@@ -96,6 +108,10 @@ class MainActivity : AppCompatActivity() {
         bottomNavView.visibility = View.GONE
     }
 
+    private fun hideDrawerMenu() {
+        drawerNavView.visibility = View.GONE
+    }
+
     override fun onSupportNavigateUp() : Boolean {
         val navController = findNavController(R.id.fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
@@ -104,8 +120,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
-        val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
-        logOut.setOnClickListener {
+        val logOut : NavigationMenuItemView? = findViewById(R.id.logoutFragment)
+        logOut?.setOnClickListener {
             auth = Firebase.auth
 
             val currentUser = auth.currentUser
@@ -115,8 +131,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val calendar : NavigationMenuItemView = findViewById(R.id.calendarFragment)
-        calendar.setOnClickListener {
+        val calendar : NavigationMenuItemView? = findViewById(R.id.calendarFragment)
+        calendar?.setOnClickListener {
             val calendarUri: Uri = CalendarContract.CONTENT_URI
                 .buildUpon()
                 .appendPath("time")
@@ -124,8 +140,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
         }
 
-        val cal : BottomNavigationItemView = findViewById(R.id.calFragment)
-        cal.setOnClickListener {
+        val cal : BottomNavigationItemView? = findViewById(R.id.calFragment)
+        cal?.setOnClickListener {
             val calendarUri: Uri = CalendarContract.CONTENT_URI
                 .buildUpon()
                 .appendPath("time")
@@ -139,4 +155,13 @@ class MainActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         return false
     }
+
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d("MUKI", "$requestCode, $resultCode, $data")
+        if (resultCode == RESULT_OK && requestCode == 500) {
+            hideBottomNav()
+            hideDrawerMenu()
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }*/
 }
