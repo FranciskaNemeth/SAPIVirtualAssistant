@@ -33,4 +33,7 @@
     <string name="valasz">Válasz</string>
     <string name="esemeny_hozzaadasa">Esemény hozzáadása</string>
     <string name="elfelejtette_jelszavat">Elfelejtette jelszavát?</string>
+    <string name="mesterseges_intelligencia">Mesterséges intelligencia</string>
+    <string name="visszajelzes_feedback">Visszajelzés/Feedback</string>
+    <string name="osszes">Összes</string>
 </resources>
