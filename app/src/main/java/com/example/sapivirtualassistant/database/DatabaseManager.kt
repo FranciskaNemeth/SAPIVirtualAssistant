@@ -3,17 +3,21 @@ package com.example.sapivirtualassistant.database
 import android.util.Log
 import com.example.sapivirtualassistant.interfaces.GetHelpModelInterface
 import com.example.sapivirtualassistant.interfaces.GetUserInterface
+import com.example.sapivirtualassistant.model.FeedbackModel
 import com.example.sapivirtualassistant.model.HelpModel
 import com.example.sapivirtualassistant.model.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 object DatabaseManager {
     lateinit var user : User
     lateinit var helpModel: HelpModel
     lateinit var helpList : MutableList<HelpModel>
 
-    fun getUserData(email : String, getUserInterface : GetUserInterface? = null) {
+    fun getUserData(email: String, getUserInterface: GetUserInterface? = null) {
         Firebase.firestore.collection("users").document(email)
             .get()
             .addOnSuccessListener { document ->
@@ -25,7 +29,7 @@ object DatabaseManager {
             }
     }
 
-    fun updateUserData(u : User) {
+    fun updateUserData(u: User) {
         Firebase.firestore.collection("users").document(u.emailAddress)
             .set(u.userToHashMapOf())
             .addOnSuccessListener { documentReference ->
@@ -36,17 +40,18 @@ object DatabaseManager {
             }
     }
 
-    private fun mapToUser(map : MutableMap<String, Any>) : User {
-        return User(userType = Integer.parseInt(map["userType"].toString()),
-                    profilePicture = map["userProfile"] as String?,
-                    userName = map["userName"] as String,
-                    emailAddress = map["emailAddress"] as String,
-                    phoneNumber = map["phoneNumber"] as String?,
-                    birthDay = map["birthDay"] as String?,
-                    className = map["className"] as String?,
-                    classGrade = map["classGrade"] as String?,
-                    classGroup = map["classGroup"] as String?,
-                    teacherTimeTable = map["teacherTimeTable"] as String?
+    private fun mapToUser(map: MutableMap<String, Any>) : User {
+        return User(
+            userType = Integer.parseInt(map["userType"].toString()),
+            profilePicture = map["userProfile"] as String?,
+            userName = map["userName"] as String,
+            emailAddress = map["emailAddress"] as String,
+            phoneNumber = map["phoneNumber"] as String?,
+            birthDay = map["birthDay"] as String?,
+            className = map["className"] as String?,
+            classGrade = map["classGrade"] as String?,
+            classGroup = map["classGroup"] as String?,
+            teacherTimeTable = map["teacherTimeTable"] as String?
         )
     }
 
@@ -67,7 +72,36 @@ object DatabaseManager {
             }
     }
 
-    private fun mapToHelpModel(map : MutableMap<String, Any>) : HelpModel {
-        return HelpModel(question = map["q"].toString(), answer = map["a"].toString(), type = map["type"].toString())
+    private fun mapToHelpModel(map: MutableMap<String, Any>) : HelpModel {
+        return HelpModel(
+            question = map["q"].toString(),
+            answer = map["a"].toString(),
+            type = map["type"].toString()
+        )
     }
+
+    fun insertFeedbackData(feedbackModel: FeedbackModel) {
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS")
+        val calendar = Calendar.getInstance()
+        //calendar.set(year, month, dayOfMonth)
+        val dateString: String = sdf.format(calendar.time)
+
+        val feedbackData = hashMapOf(
+            "rating" to feedbackModel.rating,
+            "message" to feedbackModel.message,
+            "email" to feedbackModel.email
+        )
+
+        Firebase.firestore.collection("feedback")
+            .document(dateString)
+            .set(feedbackData)
+            .addOnSuccessListener { document ->
+                Log.d("MUKI", "Success ")
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TAG", "Error getting documents: ", exception)
+            }
+    }
+
 }
