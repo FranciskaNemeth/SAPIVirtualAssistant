@@ -10,16 +10,8 @@
             android:title="@string/naptar" />
 
         <item
-            android:id="@+id/assistantFragment"
-            android:title="@string/asszisztens" />
-
-        <item
             android:id="@+id/profileFragment"
             android:title="@string/profil_szerkesztese" />
-
-        <item
-            android:id="@+id/settingsFragment"
-            android:title="@string/beallitasok" />
     </group>
 
     <group>

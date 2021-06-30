@@ -1,10 +1,11 @@
-package com.example.sapivirtualassistant
+package com.example.sapivirtualassistant.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.sapivirtualassistant.R
 
 class CalendarFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {

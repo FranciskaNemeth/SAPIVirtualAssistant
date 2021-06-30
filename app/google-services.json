@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "520715158823",
+    "project_id": "sapivirtualassistant",
+    "storage_bucket": "sapivirtualassistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520715158823:android:f565958b3a0adc2c669502",
+        "android_client_info": {
+          "package_name": "com.example.sapivirtualassistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520715158823-lbo9bddehpkk93ullhvhsvcpqhkfhr0g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjGIZ4nT-qXjKb_uMdHtUiM0g1RV3cRMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520715158823-lbo9bddehpkk93ullhvhsvcpqhkfhr0g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

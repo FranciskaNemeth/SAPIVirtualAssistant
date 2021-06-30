@@ -1,4 +1,4 @@
-package com.example.sapivirtualassistant
+package com.example.sapivirtualassistant.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -20,7 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
+import com.example.sapivirtualassistant.R
 import java.util.*
 
 

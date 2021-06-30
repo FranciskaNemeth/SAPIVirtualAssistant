@@ -1,11 +1,16 @@
-package com.example.sapivirtualassistant
+package com.example.sapivirtualassistant.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.TextView
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,9 +20,20 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.interfaces.GetUserInterface
+import com.example.sapivirtualassistant.model.User
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout : DrawerLayout
     lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var drawerNavView : NavigationView
+    lateinit var toolBar : Toolbar
+    private lateinit var auth : FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +69,35 @@ class MainActivity : AppCompatActivity() {
 
         drawerNavView.setupWithNavController(navController)
         bottomNavView.setupWithNavController(navController)
+
+
+        val auth : FirebaseAuth = Firebase.auth
+        if(auth.currentUser != null) {
+            DatabaseManager.getUserData(auth.currentUser!!.email!!, object : GetUserInterface {
+                override fun getUser(user: User) {
+                    val headerView = drawerNavView.getHeaderView(0)
+                    val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
+                    val navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
+                    navUsername.text = user.userName
+                    val ref = Firebase.storage.reference.child("images/" + user.emailAddress + ".jpg")
+                    var imgURL: String?
+                    ref.downloadUrl.addOnSuccessListener { Uri ->
+                        imgURL = Uri.toString()
+                        Glide.with(this@MainActivity)
+                            .load(imgURL)
+                            .into(navUserProfile)
+                    }
+                }
+            })
+        }
+
+        val isGuest = intent.getBooleanExtra("Guest", false)
+        if (isGuest) {
+            //hideDrawerMenu()
+            hideBottomNav()
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setHomeButtonEnabled(false)
+        }
     }
 
     private fun showBottomNav() {
@@ -59,6 +106,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideBottomNav() {
         bottomNavView.visibility = View.GONE
+    }
+
+    private fun hideDrawerMenu() {
+        drawerNavView.visibility = View.GONE
     }
 
     override fun onSupportNavigateUp() : Boolean {
@@ -71,7 +122,13 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
         val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
         logOut.setOnClickListener {
-            finish()
+            auth = Firebase.auth
+
+            val currentUser = auth.currentUser
+            if(currentUser != null) {
+                FirebaseAuth.getInstance().signOut()
+                finish()
+            }
         }
 
         val calendar : NavigationMenuItemView = findViewById(R.id.calendarFragment)
@@ -82,10 +139,21 @@ class MainActivity : AppCompatActivity() {
                 .build()
             startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
         }
+
+        val cal : BottomNavigationItemView = findViewById(R.id.calFragment)
+        cal.setOnClickListener {
+            val calendarUri: Uri = CalendarContract.CONTENT_URI
+                .buildUpon()
+                .appendPath("time")
+                .build()
+            startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+        }
+
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         return false
     }
+
 }

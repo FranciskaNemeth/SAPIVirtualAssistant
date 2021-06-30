@@ -6,60 +6,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/global_margin24"
         android:layout_marginTop="@dimen/global_margin24"
-        app:layout_constraintBottom_toTopOf="@+id/buttonTopic1"
+        app:layout_constraintBottom_toTopOf="@+id/buttonTopicAI"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/buttonTopic1"
+        android:id="@+id/buttonTopicAI"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/global_margin24"
         android:layout_marginTop="@dimen/global_margin24"
-        android:text="@string/topic_1"
-        app:layout_constraintEnd_toStartOf="@+id/buttonTopic2"
+        android:textSize="8sp"
+        android:text="@string/mesterseges_intelligencia"
+        app:layout_constraintEnd_toStartOf="@+id/buttonTopicFeedback"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
     <Button
-        android:id="@+id/buttonTopic2"
+        android:id="@+id/buttonTopicFeedback"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/buttonBetween8"
         android:layout_marginEnd="@dimen/global_margin24"
-        android:text="@string/topic_2"
-        app:layout_constraintBaseline_toBaselineOf="@+id/buttonTopic1"
+        android:textSize="8sp"
+        android:text="@string/visszajelzes_feedback"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonTopicAI"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonTopic1" />
+        app:layout_constraintStart_toEndOf="@+id/buttonTopicAI" />
 
     <Button
-        android:id="@+id/buttonTopic3"
+        android:id="@+id/buttonTopicLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/global_margin24"
-        android:layout_marginTop="@dimen/global_margin24"
-        android:text="@string/topic_3"
-        app:layout_constraintEnd_toStartOf="@+id/buttonTopic4"
+        android:layout_marginTop="@dimen/buttonBetween8"
+        android:text="@string/bejelentkezes"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonTopicTimetable"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTopic1" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonTopicAI" />
 
     <Button
-        android:id="@+id/buttonTopic4"
+        android:id="@+id/buttonTopicTimetable"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/buttonBetween8"
         android:layout_marginEnd="@dimen/global_margin24"
-        android:text="@string/topic_4"
-        app:layout_constraintBaseline_toBaselineOf="@+id/buttonTopic3"
+        android:text="@string/orarend"
+        android:textSize="8sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonTopicLogin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonTopic3" />
+        app:layout_constraintStart_toEndOf="@+id/buttonTopicLogin" />
+
+    <Button
+        android:id="@+id/buttonAll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/global_margin24"
+        android:layout_marginTop="@dimen/buttonBetween8"
+        android:layout_marginEnd="@dimen/global_margin24"
+        android:text="@string/osszes"
+        app:layout_constraintBottom_toTopOf="@+id/textViewHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTopicLogin" />
 
     <TextView
         android:id="@+id/textViewHelp"
@@ -74,7 +91,7 @@
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTopic3" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonAll"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
