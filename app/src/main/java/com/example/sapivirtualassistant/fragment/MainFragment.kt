@@ -1,5 +1,6 @@
 package com.example.sapivirtualassistant.fragment
 
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +10,8 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -28,8 +31,21 @@ class MainFragment : Fragment() {
     private var textView: TextView? = null
     private var imageView: ImageView? = null
 
+    val locale = Locale("hun", "HU")
+
+    private val textToSpeechEngine: TextToSpeech by lazy {
+        TextToSpeech(requireActivity(),
+            TextToSpeech.OnInitListener { status ->
+                if (status == TextToSpeech.SUCCESS) {
+                    textToSpeechEngine.language = locale
+                }
+            })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        textToSpeechEngine.speak("", TextToSpeech.QUEUE_FLUSH, null, "tts1")
     }
 
     @SuppressLint("ClickableViewAccessibility") // i don't know what's this
@@ -55,7 +71,7 @@ class MainFragment : Fragment() {
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale)
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(bundle: Bundle) {}
             override fun onBeginningOfSpeech() {
@@ -70,7 +86,7 @@ class MainFragment : Fragment() {
             override fun onResults(bundle: Bundle) {
                 imageView?.setImageResource(R.drawable.sapilogo)
                 val data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                val specialStr = data!![0].toLowerCase()
+                val specialStr = data!![0].toLowerCase(locale)
                 if(specialStr == "szia szabi")
                 {
                     textView?.text = "Szia Sapi"
@@ -78,8 +94,10 @@ class MainFragment : Fragment() {
                 else
                 {
                     textView?.text = data[0]
+
+                    textToSpeechEngine.speak(data[0], TextToSpeech.QUEUE_FLUSH, null, "tts1")
                 }
-                val str = data[0].toLowerCase()
+                val str = data[0].toLowerCase(locale)
                 if (str == "helló" || str == "hello" || str == "hi" || str == "hallo" || str == "hali" || str == "szia")
                 {
                     Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_profileFragment)
