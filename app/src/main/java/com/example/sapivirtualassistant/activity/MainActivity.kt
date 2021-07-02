@@ -7,7 +7,6 @@ import android.provider.CalendarContract
 import android.view.Menu
 import android.view.View
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout
@@ -20,6 +19,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.fragment.OnPicHasChangedListener
 import com.example.sapivirtualassistant.interfaces.GetUserInterface
 import com.example.sapivirtualassistant.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -33,13 +33,14 @@ import com.google.firebase.storage.ktx.storage
 import de.hdodenhof.circleimageview.CircleImageView
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
     lateinit var navController : NavController
     lateinit var bottomNavView : BottomNavigationView
     lateinit var drawerLayout : DrawerLayout
     lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var drawerNavView : NavigationView
     private lateinit var auth : FirebaseAuth
+    lateinit var navUserProfile : CircleImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 override fun getUser(user: User) {
                     val headerView = drawerNavView.getHeaderView(0)
                     val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
-                    val navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
+                    navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
                     navUsername.text = user.userName
                     val ref = Firebase.storage.reference.child("images/" + user.emailAddress + ".jpg")
                     var imgURL: String?
@@ -95,12 +96,8 @@ class MainActivity : AppCompatActivity() {
 
         val isGuest = intent.getBooleanExtra("Guest", false)
         if (isGuest) {
-            //hideDrawerMenu()
-            //hideBottomNav()
             hideBottomNavItems()
             hideDrawerMenuItems()
-            //supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            //supportActionBar?.setHomeButtonEnabled(false)
         }
     }
 
@@ -183,6 +180,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         return false
+    }
+
+    override fun onPicHasChanged(imgURL : String) {
+        Glide.with(this@MainActivity)
+            .load(imgURL)
+            .into(navUserProfile)
     }
 
 }
