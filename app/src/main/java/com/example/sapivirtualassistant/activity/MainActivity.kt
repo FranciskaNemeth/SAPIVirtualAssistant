@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout : DrawerLayout
     lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var drawerNavView : NavigationView
-    lateinit var toolBar : Toolbar
     private lateinit var auth : FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +85,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
+        }
+        else
+        {
+            val headerView = drawerNavView.getHeaderView(0)
+            val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
+            navUsername.text = "Vendég"
         }
 
         val isGuest = intent.getBooleanExtra("Guest", false)

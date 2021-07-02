@@ -141,6 +141,15 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         val factory = LayoutInflater.from(requireContext())
         val view: View = factory.inflate(R.layout.image_dialog, null)
         val img = view.findViewById<ImageView>(R.id.imageDialog)
+        val ref = storage.reference.child("images/" + user.emailAddress + ".jpg")
+
+        ref.downloadUrl.addOnSuccessListener { Uri ->
+            imgURL = Uri.toString()
+            Glide.with(requireActivity())
+                .load(imgURL)
+                .into(profilePicture)
+        }
+
         Glide.with(requireActivity())
             .load(imgURL)
             .into(img)
