@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.MainActivity
@@ -41,6 +40,7 @@ class MainLoginFragment : Fragment() {
 
         val buttonBejelentkezes : Button = view.findViewById(R.id.buttonBejelentkezes)
         buttonBejelentkezes.setOnClickListener {
+            DatabaseManager.isGuest = false
             setFragmentResult("requestKey", bundleOf("name" to "Bejelentkezés"))
             Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_loginFragment)
         }
@@ -48,7 +48,7 @@ class MainLoginFragment : Fragment() {
         val buttonVendeg : Button = view.findViewById(R.id.buttonVendeg)
         buttonVendeg.setOnClickListener{
             val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra("Guest", true)
+            DatabaseManager.isGuest = true
             startActivity(intent)
         }
 

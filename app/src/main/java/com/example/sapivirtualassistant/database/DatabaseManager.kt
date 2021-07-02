@@ -16,6 +16,7 @@ object DatabaseManager {
     lateinit var user : User
     lateinit var helpModel: HelpModel
     lateinit var helpList : MutableList<HelpModel>
+    var isGuest : Boolean = false
 
     fun getUserData(email: String, getUserInterface: GetUserInterface? = null) {
         Firebase.firestore.collection("users").document(email)
@@ -103,5 +104,4 @@ object DatabaseManager {
                 Log.d("TAG", "Error getting documents: ", exception)
             }
     }
-
 }
