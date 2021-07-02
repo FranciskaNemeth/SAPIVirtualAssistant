@@ -2,12 +2,14 @@ package com.example.sapivirtualassistant.fragment
 
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +47,7 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private var imageUri: Uri? = null
     val storage = Firebase.storage
     var imgURL : String? = null
+    lateinit var imgURLToSend : OnPicHasChangedListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,13 +91,12 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             if (result.resultCode == RESULT_OK) {
                 val intent = result.data
                 // Handle the Intent
-                //do stuff here
                 imageUri = intent?.data
+                imgURL = imageUri.toString()
+                imgURLToSend.onPicHasChanged(imgURL!!)
                 profilePicture.setImageURI(imageUri)
                 val storageRef = storage.reference
                 val mountainsRef = storageRef.child("images/" + user.emailAddress + ".jpg")
-                //profilePicture.isDrawingCacheEnabled = true
-                //profilePicture.buildDrawingCache()
                 val bitmap = (profilePicture.drawable as BitmapDrawable).bitmap
                 val baos = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
@@ -104,7 +106,7 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 uploadTask.addOnFailureListener {
                     // Handle unsuccessful uploads
                 }.addOnSuccessListener { taskSnapshot ->
-                    user.profilePicture = dataB.toString()
+                    Log.d("Muki", "Succes")
                 }
             }
         }
@@ -112,7 +114,6 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         pencilButton.setOnClickListener {
             val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
             startForResult.launch(gallery)
-            //startActivityForResult(gallery, 100)
         }
 
         profilePicture.setOnClickListener {
@@ -141,14 +142,6 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         val factory = LayoutInflater.from(requireContext())
         val view: View = factory.inflate(R.layout.image_dialog, null)
         val img = view.findViewById<ImageView>(R.id.imageDialog)
-        val ref = storage.reference.child("images/" + user.emailAddress + ".jpg")
-
-        ref.downloadUrl.addOnSuccessListener { Uri ->
-            imgURL = Uri.toString()
-            Glide.with(requireActivity())
-                .load(imgURL)
-                .into(profilePicture)
-        }
 
         Glide.with(requireActivity())
             .load(imgURL)
@@ -160,29 +153,6 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
         alertAdd.show()
     }
-
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        //super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == 100) {
-            imageUri = data?.data
-            profilePicture.setImageURI(imageUri)
-            val storageRef = storage.reference
-            val mountainsRef = storageRef.child("images/" + user.emailAddress + ".jpg")
-            //profilePicture.isDrawingCacheEnabled = true
-            //profilePicture.buildDrawingCache()
-            val bitmap = (profilePicture.drawable as BitmapDrawable).bitmap
-            val baos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val dataB = baos.toByteArray()
-
-            val uploadTask = mountainsRef.putBytes(dataB)
-            uploadTask.addOnFailureListener {
-                // Handle unsuccessful uploads
-            }.addOnSuccessListener { taskSnapshot ->
-                user.profilePicture = dataB.toString()
-            }
-        }
-    }*/
 
     private fun showDatePickerDialog() {
         val datePickerDialog = DatePickerDialog(
@@ -219,4 +189,13 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         val dateString: String = sdf.format(calendar.time)
         datePickerText.setText(dateString)
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        imgURLToSend = context as OnPicHasChangedListener
+    }
+}
+
+public interface OnPicHasChangedListener {
+    fun onPicHasChanged (imgURL : String)
 }
