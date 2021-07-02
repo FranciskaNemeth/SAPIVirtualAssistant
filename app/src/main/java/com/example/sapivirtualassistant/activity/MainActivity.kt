@@ -5,12 +5,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -21,13 +21,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.database.DatabaseManager
-import com.example.sapivirtualassistant.fragment.MainFragment
 import com.example.sapivirtualassistant.fragment.OnPicHasChangedListener
 import com.example.sapivirtualassistant.interfaces.GetUserInterface
 import com.example.sapivirtualassistant.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.internal.NavigationMenuItemView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -36,7 +34,7 @@ import com.google.firebase.storage.ktx.storage
 import de.hdodenhof.circleimageview.CircleImageView
 
 
-class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
+class MainActivity : AppCompatActivity(), OnPicHasChangedListener, NavigationView.OnNavigationItemSelectedListener{
     lateinit var navController : NavController
     lateinit var bottomNavView : BottomNavigationView
     lateinit var drawerLayout : DrawerLayout
@@ -101,6 +99,55 @@ class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
             hideBottomNavItems()
             hideDrawerMenuItems()
         }
+
+        drawerNavView.setNavigationItemSelectedListener(this)
+    }
+
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        p0.isChecked = true
+        when (p0.itemId) {
+            R.id.timetableFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_timetableFragment)
+            }
+            R.id.calendarFragment -> {
+                val calendarUri: Uri = CalendarContract.CONTENT_URI
+                    .buildUpon()
+                    .appendPath("time")
+                    .build()
+                startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+            }
+
+            R.id.profileFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_profileFragment)
+            }
+            R.id.helpFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_helpFragment)
+            }
+            R.id.feedbackFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_feedbackFragment)
+            }
+            R.id.logoutFragment -> {
+                if (DatabaseManager.isGuest)
+                {
+                    val navMenu: Menu = drawerNavView.menu
+                    navMenu.findItem(R.id.logoutFragment).isVisible = false
+                }
+                else {
+                    val navMenu: Menu = drawerNavView.menu
+                    navMenu.findItem(R.id.logoutFragment).isVisible = true
+                    auth = Firebase.auth
+
+                    val currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        FirebaseAuth.getInstance().signOut()
+                        finish()
+                    }
+                }
+            }
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 
     private fun showBottomNav() {
@@ -112,16 +159,12 @@ class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
     }
 
     private fun hideBottomNavItems() {
-        val navMenu: Menu = bottomNavView.getMenu()
+        val navMenu: Menu = bottomNavView.menu
         navMenu.findItem(R.id.profileFragment).isVisible = false
     }
 
-    private fun hideDrawerMenu() {
-        drawerNavView.visibility = View.GONE
-    }
-
     private fun hideDrawerMenuItems() {
-        val navMenu: Menu = drawerNavView.getMenu()
+        val navMenu: Menu = drawerNavView.menu
         navMenu.findItem(R.id.timetableFragment).isVisible = false
         navMenu.findItem(R.id.profileFragment).isVisible = false
         navMenu.findItem(R.id.logoutFragment).isVisible = false
@@ -135,37 +178,6 @@ class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
-
-        if (DatabaseManager.isGuest)
-        {
-            val navMenu: Menu = drawerNavView.getMenu()
-            navMenu.findItem(R.id.logoutFragment).isVisible = false
-        }
-        else
-        {
-            val navMenu: Menu = drawerNavView.getMenu()
-            navMenu.findItem(R.id.logoutFragment).isVisible = true
-            val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
-            logOut.setOnClickListener {
-                auth = Firebase.auth
-
-                val currentUser = auth.currentUser
-                if(currentUser != null) {
-                    FirebaseAuth.getInstance().signOut()
-                    finish()
-                }
-            }
-        }
-
-
-        val calendar : NavigationMenuItemView = findViewById(R.id.calendarFragment)
-        calendar.setOnClickListener {
-            val calendarUri: Uri = CalendarContract.CONTENT_URI
-                .buildUpon()
-                .appendPath("time")
-                .build()
-            startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
-        }
 
         val cal : BottomNavigationItemView = findViewById(R.id.calFragment)
         cal.setOnClickListener {
