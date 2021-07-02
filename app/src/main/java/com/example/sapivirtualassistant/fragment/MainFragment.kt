@@ -11,6 +11,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -25,18 +26,33 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.LoginActivity
-import com.example.sapivirtualassistant.activity.MainActivity
-import com.example.sapivirtualassistant.database.DatabaseManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
 
-class MainFragment : Fragment() {
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import okio.BufferedSink
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.*
+import java.nio.ByteBuffer
+import java.util.concurrent.atomic.AtomicBoolean
+
+
+class MainFragment : Fragment(), Callback<ResponseBody> {
     private var textView: TextView? = null
     private var imageView: ImageView? = null
     lateinit var auth : FirebaseAuth
+    private lateinit var witInterface: WitInterface
 
     val locale = Locale("hun", "HU")
 
@@ -51,6 +67,13 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        witInterface = with(Retrofit.Builder()) {
+            baseUrl("https://api.wit.ai/")
+            with(build()) {
+                create(WitInterface::class.java)
+            }
+        }
 
         auth = Firebase.auth
 
@@ -118,22 +141,29 @@ class MainFragment : Fragment() {
             override fun onResults(bundle: Bundle) {
                 imageView?.setImageResource(R.drawable.sapilogo)
                 val data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                val specialStr = data!![0].toLowerCase(locale)
-                if(specialStr == "szia szabi")
-                {
-                    textView?.text = "Szia Sapi"
-                }
-                else
-                {
-                    textView?.text = data[0]
+                var specialStr = data!![0].toLowerCase(locale)
 
-                    textToSpeechEngine.speak(data[0], TextToSpeech.QUEUE_FLUSH, null, "tts1")
-                }
-                val str = data[0].toLowerCase(locale)
+                specialStr = specialStr.replace("szabi", "Sapi")
+
+                //specialStr = "Szia, Sapi"
+
+                specialStr = specialStr.capitalize(locale)
+
+                textView?.text = specialStr
+
+                //textToSpeechEngine.speak(data[0], TextToSpeech.QUEUE_FLUSH, null, "tts1")
+
+                // send Text Message
+                /*sendTextMessageButton.setOnClickListener {
+                    witInterface.forTextMessage(textMessageInput.text.toString()).enqueue(this)
+                }*/
+                witInterface.forTextMessage(specialStr).enqueue(this@MainFragment)
+
+                /*val str = data[0].toLowerCase(locale)
                 if (str == "helló" || str == "hello" || str == "hi" || str == "hallo" || str == "hali" || str == "szia")
                 {
                     Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_profileFragment)
-                }
+                }*/
             }
 
             override fun onPartialResults(bundle: Bundle) {}
@@ -188,5 +218,84 @@ class MainFragment : Fragment() {
 
     companion object {
         const val RecordAudioRequestCode = 1
+
+        /**
+         * Client Access Token of Wit.ai App
+         */
+        private const val CLIENT_ACCESS_TOKEN = "PZT3GXMUFCGPRW4Y67SEJMFS4WK7LDRV"
+    }
+
+    interface WitInterface {
+        @Headers("Authorization: Bearer $CLIENT_ACCESS_TOKEN")
+        @GET("/message")
+        fun forTextMessage(
+            @Query(value = "q") message: String,
+            @Query(value = "v") version: String = "20200513"
+        ): Call<ResponseBody>
+    }
+
+    // Handles response from Wit.ai App
+    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        if (response.body() == null) return
+        // get the JSON Object sent by Wit.ai
+        val data = JSONObject(response.body()!!.string())
+        try {
+            val res = data
+            Log.d("WIT", "data: $res")
+
+            // get most confident Intent
+            //val intent = data.getJSONArray("intents").mostConfident() ?: return
+            //Log.d("WIT", "intent: $intent")
+
+            // get most confident wit$number:first Entity
+            /*val entity = data.getJSONObject("entities")
+                .getJSONArray("wit\$entities:first").mostConfident()?.get("value")?.toString()
+                ?.toDoubleOrNull() ?: return*/
+            //val entity = data.getJSONObject("entities")
+            //    .getJSONArray("entities").mostConfident()?.get("name")?.toString()
+            //    ?.toDoubleOrNull() ?: return
+            //Log.d("WIT", "entity: $entity")
+
+
+
+            // based on Intent set text in result TextView
+            /*result.text = when (intent.getString("name")) {
+                "add_num" -> number1 + number2
+                "sub_num" -> number1 - number2
+                "mul_num" -> number1 * number2
+                "div_num" -> number1 / number2
+                else -> ""
+            }.toString()*/
+        } catch (e: Exception) {
+            Log.e("OnResponse", "Error getting Entities or Intent", e)
+        }
+    }
+
+    /**
+     * JSONArray Extension function to get most confident object in it
+     *
+     * @return Most Confident JSONObject
+     */
+    private fun JSONArray.mostConfident(): JSONObject? {
+        var confidentObject: JSONObject? = null
+        var maxConfidence = 0.0
+        for (i in 0 until length()) {
+            try {
+                val obj = getJSONObject(i)
+                val currConfidence = obj.getDouble("confidence")
+                if (currConfidence > maxConfidence) {
+                    maxConfidence = currConfidence
+                    confidentObject = obj
+                }
+            } catch (e: JSONException) {
+                Log.e("WIT", "mostConfident: ", e)
+            }
+        }
+        return confidentObject
+    }
+
+    // On failure just log it
+    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        Log.e("WIT", "API call failed")
     }
 }
