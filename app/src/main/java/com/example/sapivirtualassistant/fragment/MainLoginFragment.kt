@@ -39,15 +39,9 @@ class MainLoginFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.main_login_screen, container, false)
 
-        val buttonOktato : Button = view.findViewById(R.id.buttonOktato)
-        buttonOktato.setOnClickListener {
-            setFragmentResult("requestKey", bundleOf("name" to "Oktató"))
-            Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_loginFragment)
-        }
-
-        val buttonHallgato : Button = view.findViewById(R.id.buttonHallgato)
-        buttonHallgato.setOnClickListener {
-            setFragmentResult("requestKey", bundleOf("name" to "Hallgató"))
+        val buttonBejelentkezes : Button = view.findViewById(R.id.buttonBejelentkezes)
+        buttonBejelentkezes.setOnClickListener {
+            setFragmentResult("requestKey", bundleOf("name" to "Bejelentkezés"))
             Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_loginFragment)
         }
 
