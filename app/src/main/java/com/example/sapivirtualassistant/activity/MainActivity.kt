@@ -1,12 +1,9 @@
 package com.example.sapivirtualassistant.activity
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.TextView
@@ -94,9 +91,11 @@ class MainActivity : AppCompatActivity() {
         val isGuest = intent.getBooleanExtra("Guest", false)
         if (isGuest) {
             //hideDrawerMenu()
-            hideBottomNav()
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            supportActionBar?.setHomeButtonEnabled(false)
+            //hideBottomNav()
+            hideBottomNavItems()
+            hideDrawerMenuItems()
+            //supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            //supportActionBar?.setHomeButtonEnabled(false)
         }
     }
 
@@ -108,8 +107,20 @@ class MainActivity : AppCompatActivity() {
         bottomNavView.visibility = View.GONE
     }
 
+    private fun hideBottomNavItems() {
+        val navMenu: Menu = bottomNavView.getMenu()
+        navMenu.findItem(R.id.profileFragment).isVisible = false
+    }
+
     private fun hideDrawerMenu() {
         drawerNavView.visibility = View.GONE
+    }
+
+    private fun hideDrawerMenuItems() {
+        val navMenu: Menu = drawerNavView.getMenu()
+        navMenu.findItem(R.id.timetableFragment).isVisible = false
+        navMenu.findItem(R.id.profileFragment).isVisible = false
+        navMenu.findItem(R.id.logoutFragment).isVisible = false
     }
 
     override fun onSupportNavigateUp() : Boolean {
@@ -120,16 +131,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
-        val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
-        logOut.setOnClickListener {
-            auth = Firebase.auth
+        val isGuest = intent.getBooleanExtra("Guest", false)
 
-            val currentUser = auth.currentUser
-            if(currentUser != null) {
-                FirebaseAuth.getInstance().signOut()
-                finish()
+        if (isGuest)
+        {
+            val navMenu: Menu = drawerNavView.getMenu()
+            navMenu.findItem(R.id.logoutFragment).isVisible = false
+        }
+        else
+        {
+            val navMenu: Menu = drawerNavView.getMenu()
+            navMenu.findItem(R.id.logoutFragment).isVisible = true
+            val logOut : NavigationMenuItemView = findViewById(R.id.logoutFragment)
+            logOut.setOnClickListener {
+                auth = Firebase.auth
+
+                val currentUser = auth.currentUser
+                if(currentUser != null) {
+                    FirebaseAuth.getInstance().signOut()
+                    finish()
+                }
             }
         }
+
 
         val calendar : NavigationMenuItemView = findViewById(R.id.calendarFragment)
         calendar.setOnClickListener {
