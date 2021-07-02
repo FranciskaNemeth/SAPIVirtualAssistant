@@ -94,8 +94,7 @@ class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
             navUsername.text = "Vendég"
         }
 
-        val isGuest = intent.getBooleanExtra("Guest", false)
-        if (isGuest) {
+        if (DatabaseManager.isGuest) {
             hideBottomNavItems()
             hideDrawerMenuItems()
         }
@@ -133,9 +132,8 @@ class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
-        val isGuest = intent.getBooleanExtra("Guest", false)
 
-        if (isGuest)
+        if (DatabaseManager.isGuest)
         {
             val navMenu: Menu = drawerNavView.getMenu()
             navMenu.findItem(R.id.logoutFragment).isVisible = false
