@@ -61,7 +61,8 @@ class HelpFragment : Fragment() {
                 return false
             }
         })
-        searchView.setIconified(false)
+
+        searchView.setIconifiedByDefault(false)
 
         val topicAI : Button = view.findViewById(R.id.buttonTopicAI)
         topicAI.setOnClickListener {

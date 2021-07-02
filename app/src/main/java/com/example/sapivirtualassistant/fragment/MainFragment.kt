@@ -11,7 +11,6 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -19,17 +18,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.activity.LoginActivity
+import com.example.sapivirtualassistant.activity.MainActivity
+import com.example.sapivirtualassistant.database.DatabaseManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 
 class MainFragment : Fragment() {
     private var textView: TextView? = null
     private var imageView: ImageView? = null
+    lateinit var auth : FirebaseAuth
 
     val locale = Locale("hun", "HU")
 
@@ -45,7 +52,32 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        auth = Firebase.auth
+
         textToSpeechEngine.speak("", TextToSpeech.QUEUE_FLUSH, null, "tts1")
+
+        // This callback will only be called when this fragment is at least Started.
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    // Handle the back button event
+                    if(auth.currentUser != null)
+                    {
+                        //finish()
+                        val a = Intent(Intent.ACTION_MAIN)
+                        a.addCategory(Intent.CATEGORY_HOME)
+                        a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(a)
+                    }
+                    else {
+                        val intent = Intent(context, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
+        // The callback can be enabled or disabled here or in handleOnBackPressed()
     }
 
     @SuppressLint("ClickableViewAccessibility") // i don't know what's this
