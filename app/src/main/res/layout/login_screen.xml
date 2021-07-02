@@ -28,7 +28,7 @@
         android:layout_marginStart="@dimen/global_margin24"
         android:layout_marginTop="@dimen/global_margin24"
         android:layout_marginEnd="@dimen/global_margin24"
-        android:text="@string/oktato_vagy_hallgato"
+        android:text="@string/bejelentkezes"
         android:textColor="@color/greenAccent"
         android:textSize="18sp"
         android:textStyle="bold"

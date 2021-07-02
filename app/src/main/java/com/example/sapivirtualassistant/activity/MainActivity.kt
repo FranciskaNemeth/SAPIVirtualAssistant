@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -19,6 +21,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.fragment.MainFragment
 import com.example.sapivirtualassistant.fragment.OnPicHasChangedListener
 import com.example.sapivirtualassistant.interfaces.GetUserInterface
 import com.example.sapivirtualassistant.model.User
@@ -185,5 +188,4 @@ class MainActivity : AppCompatActivity(), OnPicHasChangedListener{
             .load(imgURL)
             .into(navUserProfile)
     }
-
 }

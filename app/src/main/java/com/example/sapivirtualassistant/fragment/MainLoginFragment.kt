@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.activity.LoginActivity
 import com.example.sapivirtualassistant.activity.MainActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +33,23 @@ class MainLoginFragment : Fragment() {
             DatabaseManager.getUserData(currentUser.email!!)
             startActivity(Intent(context, MainActivity::class.java))
         }
+
+        // This callback will only be called when this fragment is at least Started.
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    // Handle the back button event
+
+                    //finish()
+                    val a = Intent(Intent.ACTION_MAIN)
+                    a.addCategory(Intent.CATEGORY_HOME)
+                    a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(a)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
+        // The callback can be enabled or disabled here or in handleOnBackPressed()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
