@@ -3,14 +3,17 @@ package com.example.sapivirtualassistant.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.AlarmClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -23,19 +26,16 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.WitResponseProcessor
 import com.example.sapivirtualassistant.activity.LoginActivity
+import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.interfaces.GetAppsInterface
+import com.example.sapivirtualassistant.interfaces.GetResponsesInterface
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import java.util.*
-
-
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import okio.BufferedSink
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -43,9 +43,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.http.*
-import java.nio.ByteBuffer
-import java.util.concurrent.atomic.AtomicBoolean
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Query
+import java.util.*
 
 
 class MainFragment : Fragment(), Callback<ResponseBody> {
@@ -53,6 +54,8 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
     private var imageView: ImageView? = null
     lateinit var auth : FirebaseAuth
     private lateinit var witInterface: WitInterface
+    private lateinit var responseProcessor: WitResponseProcessor
+    lateinit var appMutableMap: MutableMap<String, String>
 
     val locale = Locale("hun", "HU")
 
@@ -119,6 +122,21 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
         textView = view.findViewById(R.id.textViewAnswer)
         imageView = view.findViewById(R.id.kabala)
 
+        textView?.movementMethod = ScrollingMovementMethod()
+
+        DatabaseManager.getWitResponses(object : GetResponsesInterface {
+            override fun getResponses(responseMap: Map<String, Map<String, List<String>>>) {
+                responseProcessor = WitResponseProcessor(responseMap)
+            }
+
+        })
+
+        DatabaseManager.getApps(object : GetAppsInterface {
+            override fun getApps(appsList: MutableMap<String, String>) {
+                appMutableMap = appsList
+            }
+        })
+
         // initializing the SpeechRecognizer object and creating the intent for recognizing the speech
         val speechRecognizer : SpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireActivity())
         val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -131,18 +149,23 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
             override fun onReadyForSpeech(bundle: Bundle) {}
             override fun onBeginningOfSpeech() {
                 textView?.setText("")
-                textView?.setHint("Listening...")
+                textView?.setHint("Hallgatlak...")
             }
 
             override fun onRmsChanged(v: Float) {}
             override fun onBufferReceived(bytes: ByteArray) {}
-            override fun onEndOfSpeech() {}
+            override fun onEndOfSpeech() {
+                textView?.setText("")
+                textView?.setHint("")
+                imageView?.setImageResource(R.drawable.sapilogo)
+            }
             override fun onError(i: Int) {}
             override fun onResults(bundle: Bundle) {
                 imageView?.setImageResource(R.drawable.sapilogo)
                 val data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 var specialStr = data!![0].toLowerCase(locale)
 
+                // TODO: move this to the same place as the one below
                 specialStr = specialStr.replace("szabi", "Sapi")
 
                 //specialStr = "Szia, Sapi"
@@ -151,12 +174,8 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
 
                 textView?.text = specialStr
 
-                //textToSpeechEngine.speak(data[0], TextToSpeech.QUEUE_FLUSH, null, "tts1")
+                //textToSpeechEngine.speak(specialStr, TextToSpeech.QUEUE_FLUSH, null, "tts1")
 
-                // send Text Message
-                /*sendTextMessageButton.setOnClickListener {
-                    witInterface.forTextMessage(textMessageInput.text.toString()).enqueue(this)
-                }*/
                 witInterface.forTextMessage(specialStr).enqueue(this@MainFragment)
 
                 /*val str = data[0].toLowerCase(locale)
@@ -175,8 +194,21 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
                 speechRecognizer.stopListening()
             }
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                imageView?.setImageResource(R.drawable.sapilogo_hatter)
-                speechRecognizer.startListening(speechRecognizerIntent)
+                if (!responseProcessor.responseManagerIsInitialized()) {
+                    responseProcessor.setAppList(appMutableMap)
+                }
+
+                if (DatabaseManager.responseMapIsInitialized() && DatabaseManager.responseMap.isNotEmpty()) {
+                    Log.d("RES", "${DatabaseManager.responseMap}")
+                    imageView?.setImageResource(R.drawable.sapilogo_hatter)
+                    speechRecognizer.startListening(speechRecognizerIntent)
+                }
+                else {
+                    //Toast.makeText(requireActivity(), "Kérlek, ellenőrizd az internet kapcsolatot!", Toast.LENGTH_LONG).show()
+                    val alertDialogFragment : AlertDialogFragment = AlertDialogFragment()
+                    alertDialogFragment.errorHandling(requireContext())
+                }
+
             }
             false
         }
@@ -188,6 +220,26 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
     /*override fun onDestroy() {
         super.onDestroy()
         speechRecognizer!!.destroy()
+    }*/
+
+    // Custom method to launch an app
+    /*private fun launchApp(packageName: String) {
+        // Get an instance of PackageManager
+        val pm = requireContext().packageManager
+
+        // Initialize a new Intent
+        val intent:Intent? = pm.getLaunchIntentForPackage(packageName)
+
+        // Add category to intent
+        intent?.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        // If intent is not null then launch the app
+        if(intent!=null){
+            requireContext().startActivity(intent)
+        }
+        else {
+            Toast.makeText(requireActivity(), "Hiba!", Toast.LENGTH_LONG).show()
+        }
     }*/
 
     // if the permission is not granted
@@ -239,35 +291,17 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
         if (response.body() == null) return
         // get the JSON Object sent by Wit.ai
         val data = JSONObject(response.body()!!.string())
-        try {
-            val res = data
-            Log.d("WIT", "data: $res")
+        Log.d("WIT", "data: $data")
 
-            // get most confident Intent
-            //val intent = data.getJSONArray("intents").mostConfident() ?: return
-            //Log.d("WIT", "intent: $intent")
+        val res = view?.let { responseProcessor.processWitResponse(data, requireContext(), it) }
+        // TODO: return written and spoken text too
+        Log.d("WIT", "sorted: $res")
 
-            // get most confident wit$number:first Entity
-            /*val entity = data.getJSONObject("entities")
-                .getJSONArray("wit\$entities:first").mostConfident()?.get("value")?.toString()
-                ?.toDoubleOrNull() ?: return*/
-            //val entity = data.getJSONObject("entities")
-            //    .getJSONArray("entities").mostConfident()?.get("name")?.toString()
-            //    ?.toDoubleOrNull() ?: return
-            //Log.d("WIT", "entity: $entity")
+        // TODO: change data for better utterence by robot
 
-
-
-            // based on Intent set text in result TextView
-            /*result.text = when (intent.getString("name")) {
-                "add_num" -> number1 + number2
-                "sub_num" -> number1 - number2
-                "mul_num" -> number1 * number2
-                "div_num" -> number1 / number2
-                else -> ""
-            }.toString()*/
-        } catch (e: Exception) {
-            Log.e("OnResponse", "Error getting Entities or Intent", e)
+        if (res != null) {
+            textView?.text = res
+            textToSpeechEngine.speak(responseProcessor.correctTextForSpeech(res), TextToSpeech.QUEUE_FLUSH, null, "tts1")
         }
     }
 

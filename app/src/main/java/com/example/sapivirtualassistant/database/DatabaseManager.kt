@@ -1,22 +1,59 @@
 package com.example.sapivirtualassistant.database
 
 import android.util.Log
+import com.example.sapivirtualassistant.interfaces.GetAppsInterface
 import com.example.sapivirtualassistant.interfaces.GetHelpModelInterface
+import com.example.sapivirtualassistant.interfaces.GetResponsesInterface
 import com.example.sapivirtualassistant.interfaces.GetUserInterface
 import com.example.sapivirtualassistant.model.FeedbackModel
 import com.example.sapivirtualassistant.model.HelpModel
 import com.example.sapivirtualassistant.model.User
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 object DatabaseManager {
     lateinit var user : User
     lateinit var helpModel: HelpModel
     lateinit var helpList : MutableList<HelpModel>
+    lateinit var responseMap : Map<String,Map<String, List<String>>>
+    lateinit var appsList : MutableMap<String, String>
     var isGuest : Boolean = false
+
+    fun getApps(getAppsInterface: GetAppsInterface? = null) {
+        Firebase.firestore.collection("apps").document("apps").get()
+            .addOnSuccessListener { document ->
+                appsList = document.data as MutableMap<String, String>
+                getAppsInterface?.getApps(appsList)
+            }
+            .addOnFailureListener { exception ->
+                Log.d("RES", "Error getting apps:  ", exception)
+            }
+    }
+
+    fun getWitResponses(getResponsesInterface: GetResponsesInterface? = null) {
+        Firebase.firestore.collection("response").get()
+            .addOnSuccessListener { qs : QuerySnapshot ->
+                responseMap = getResponseMap(qs)
+                getResponsesInterface?.getResponses(responseMap)
+            }
+            .addOnFailureListener { exception ->
+                Log.d("RES", "Error getting response documents: ", exception)
+            }
+    }
+
+    fun getResponseMap(querySnapshot: QuerySnapshot) : Map<String,Map<String, List<String>>> {
+        var resMap : MutableMap<String, Map<String, List<String>>> = HashMap()
+        for (doc in querySnapshot.documents) {
+            resMap[doc.id] = doc.data as Map<String, List<String>>
+        }
+
+        return resMap
+    }
 
     fun getUserData(email: String, getUserInterface: GetUserInterface? = null) {
         Firebase.firestore.collection("users").document(email)
@@ -103,5 +140,9 @@ object DatabaseManager {
             .addOnFailureListener { exception ->
                 Log.d("TAG", "Error getting documents: ", exception)
             }
+    }
+
+    public fun responseMapIsInitialized() : Boolean {
+        return this::responseMap.isInitialized
     }
 }

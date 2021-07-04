@@ -12,7 +12,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
-import com.example.sapivirtualassistant.activity.LoginActivity
 import com.example.sapivirtualassistant.activity.MainActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
 import com.google.firebase.auth.FirebaseAuth
