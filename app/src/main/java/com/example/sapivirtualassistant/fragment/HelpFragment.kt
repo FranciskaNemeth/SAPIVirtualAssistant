@@ -15,6 +15,7 @@ import com.example.sapivirtualassistant.adapter.HelpRecyclerViewAdapter
 import com.example.sapivirtualassistant.database.DatabaseManager
 import com.example.sapivirtualassistant.interfaces.GetHelpModelInterface
 import com.example.sapivirtualassistant.model.HelpModel
+import com.example.sapivirtualassistant.utils.UtilsClass
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -100,6 +101,18 @@ class HelpFragment : Fragment() {
         recyclerView.addItemDecoration(itemDecoration)
 
         return view
+    }
+
+    override fun onResume() {
+        if( !UtilsClass().isNetworkAvailable(requireContext()) ) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }
+
+        /*if(!UtilsClass().isInternetAvailable()) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }*/
+
+        super.onResume()
     }
 
     fun filterHelpBySearch(searchText : String?) {
