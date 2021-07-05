@@ -50,8 +50,19 @@ class LoginFragment : Fragment() {
 
         val buttonLogin : Button = view.findViewById(R.id.buttonLogin)
         buttonLogin.setOnClickListener {
-            if (isValidEmail(emailEditText.text.toString())) {
-                login(emailEditText.text.toString(), pwdEditText.text.toString())
+            if (emailEditText.text.isNullOrBlank() || emailEditText.text.isNullOrEmpty() || pwdEditText.text.isNullOrBlank() || pwdEditText.text.isNullOrEmpty())
+            {
+                Toast.makeText(requireActivity(), "Üres az e-mail cím vagy a jelszó mező!",
+                    Toast.LENGTH_LONG).show()
+            }
+            else {
+                if (isValidEmail(emailEditText.text.toString())) {
+                    login(emailEditText.text.toString(), pwdEditText.text.toString())
+                }
+                else {
+                    Toast.makeText(requireActivity(), "Helytelen e-mail cím vagy jelszó!",
+                        Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -67,8 +78,19 @@ class LoginFragment : Fragment() {
 
         val buttonForgotPassword : Button = view.findViewById(R.id.buttonForgotPwd)
         buttonForgotPassword.setOnClickListener {
-            if (isValidEmail(emailEditText.text.toString())) {
-                forgotPassword(emailEditText.text.toString())
+            if (emailEditText.text.isNullOrBlank() || emailEditText.text.isNullOrEmpty())
+            {
+                Toast.makeText(requireActivity(), "Üres az e-mail cím mező!",
+                    Toast.LENGTH_LONG).show()
+            }
+            else {
+                if (isValidEmail(emailEditText.text.toString())) {
+                    forgotPassword(emailEditText.text.toString())
+                }
+                else {
+                    Toast.makeText(requireActivity(), "Nem létező vagy helytelen e-mail cím!",
+                        Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -98,9 +120,8 @@ class LoginFragment : Fragment() {
                     //updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(requireActivity(), "Authentication failed.",
+                    Toast.makeText(requireActivity(), "Helytelen e-mail cím vagy jelszó!",
                         Toast.LENGTH_LONG).show()
-                    //updateUI(null)
                 }
             }
     }
@@ -110,7 +131,7 @@ class LoginFragment : Fragment() {
             if (task.isSuccessful) {
                 Toast.makeText(requireActivity(), "Ellenőrizze az e-mailjeit!", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(requireActivity(), "Próbálja meg újra!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), "Próbálja meg újra!", Toast.LENGTH_LONG).show()
             }
         }
     }
