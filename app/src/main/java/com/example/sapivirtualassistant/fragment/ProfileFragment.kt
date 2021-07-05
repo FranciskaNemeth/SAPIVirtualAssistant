@@ -107,7 +107,7 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 uploadTask.addOnFailureListener {
                     // Handle unsuccessful uploads
                 }.addOnSuccessListener { taskSnapshot ->
-                    Log.d("Muki", "Succes")
+                    Log.d("UPLOAD", "Succes")
                 }
             }
         }
@@ -143,10 +143,6 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             AlertDialogFragment().errorHandling(requireContext())
         }
 
-        /*if(!UtilsClass().isInternetAvailable()) {
-            AlertDialogFragment().errorHandling(requireContext())
-        }*/
-
         super.onResume()
     }
 
@@ -160,7 +156,7 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             .load(imgURL)
             .into(img)
         alertAdd.setView(view)
-        alertAdd.setNeutralButton("Bezár!") { _, _ ->
+        alertAdd.setNeutralButton("Bezár") { _, _ ->
 
         }
 
@@ -193,9 +189,6 @@ class ProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        /*val date = "$year.$month.$dayOfMonth"
-        datePickerText.setText(date)*/
-
         val sdf = SimpleDateFormat("yyyy.MMMM.dd")
         val calendar = Calendar.getInstance()
         calendar.set(year, month, dayOfMonth)

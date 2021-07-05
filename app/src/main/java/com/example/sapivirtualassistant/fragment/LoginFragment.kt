@@ -2,16 +2,14 @@ package com.example.sapivirtualassistant.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.MainActivity
@@ -102,10 +100,6 @@ class LoginFragment : Fragment() {
             AlertDialogFragment().errorHandling(requireContext())
         }
 
-        /*if(!UtilsClass().isInternetAvailable()) {
-            AlertDialogFragment().errorHandling(requireContext())
-        }*/
-
         super.onResume()
     }
 
@@ -117,7 +111,6 @@ class LoginFragment : Fragment() {
                     val user = auth.currentUser
                     DatabaseManager.getUserData(email)
                     startActivity(Intent(context, MainActivity::class.java))
-                    //updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(requireActivity(), "Helytelen e-mail cím vagy jelszó!",

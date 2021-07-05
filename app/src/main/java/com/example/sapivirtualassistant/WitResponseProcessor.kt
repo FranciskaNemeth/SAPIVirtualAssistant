@@ -116,9 +116,7 @@ class WitResponseProcessor(private val responseMap: Map<String, Map<String, List
                 var responseList = traitMapForIntent!!["default"]
                 if (trait != null) {
                     responseList = traitMapForIntent[trait]
-                    Log.d("WIT", "1")
                 }
-                Log.d("WIT", "2")
 
                 val randomIndex = responseList?.let { rand(it.size) }
                 return responseList!![randomIndex!!]
@@ -130,13 +128,11 @@ class WitResponseProcessor(private val responseMap: Map<String, Map<String, List
                     return getDefaultResponse()
                 }
                 val randomIndex = responseList?.let { rand(it.size) }
-                Log.d("WIT", "3")
 
                 return responseList!![randomIndex!!]
 
             }
             else -> {
-                Log.d("WIT", "4")
                 return getDefaultResponse()
             }
         }
@@ -171,8 +167,7 @@ class WitResponseProcessor(private val responseMap: Map<String, Map<String, List
                 }
             }
         }
-        //Log.d("WIT", "Trait map: $traitMap")
-        //Log.d("WIT", "ResponseMap")
+
         return traitMap
     }
 
