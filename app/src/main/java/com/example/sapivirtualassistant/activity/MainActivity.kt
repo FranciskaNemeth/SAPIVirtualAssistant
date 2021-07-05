@@ -1,0 +1,203 @@
+package com.example.sapivirtualassistant.activity
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.provider.CalendarContract
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.fragment.OnPicHasChangedListener
+import com.example.sapivirtualassistant.interfaces.GetUserInterface
+import com.example.sapivirtualassistant.model.User
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import de.hdodenhof.circleimageview.CircleImageView
+
+
+class MainActivity : AppCompatActivity(), OnPicHasChangedListener, NavigationView.OnNavigationItemSelectedListener{
+    lateinit var navController : NavController
+    lateinit var bottomNavView : BottomNavigationView
+    lateinit var drawerLayout : DrawerLayout
+    lateinit var appBarConfiguration: AppBarConfiguration
+    lateinit var drawerNavView : NavigationView
+    private lateinit var auth : FirebaseAuth
+    lateinit var navUserProfile : CircleImageView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        setContentView(R.layout.activity_main)
+
+        navController = findNavController(R.id.fragment)
+        bottomNavView = findViewById(R.id.bottomNavView)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        drawerNavView = findViewById(R.id.drawerNavigationView)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.mainFragment -> {
+                    showBottomNav()
+                }
+                else -> hideBottomNav()
+            }
+        }
+
+        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
+        drawerNavView.setupWithNavController(navController)
+        bottomNavView.setupWithNavController(navController)
+
+
+        val auth : FirebaseAuth = Firebase.auth
+        if(auth.currentUser != null) {
+            DatabaseManager.getUserData(auth.currentUser!!.email!!, object : GetUserInterface {
+                override fun getUser(user: User) {
+                    val headerView = drawerNavView.getHeaderView(0)
+                    val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
+                    navUserProfile = headerView.findViewById<View>(R.id.imageViewProfile) as CircleImageView
+                    navUsername.text = user.userName
+                    val ref = Firebase.storage.reference.child("images/" + user.emailAddress + ".jpg")
+                    var imgURL: String?
+                    ref.downloadUrl.addOnSuccessListener { Uri ->
+                        imgURL = Uri.toString()
+                        Glide.with(this@MainActivity)
+                            .load(imgURL)
+                            .into(navUserProfile)
+                    }
+                }
+            })
+        }
+        else
+        {
+            val headerView = drawerNavView.getHeaderView(0)
+            val navUsername = headerView.findViewById<View>(R.id.textViewName) as TextView
+            navUsername.text = "Vendég"
+        }
+
+        if (DatabaseManager.isGuest) {
+            hideBottomNavItems()
+            hideDrawerMenuItems()
+        }
+
+        drawerNavView.setNavigationItemSelectedListener(this)
+    }
+
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        p0.isChecked = true
+        when (p0.itemId) {
+            R.id.timetableFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_timetableFragment)
+            }
+            R.id.calendarFragment -> {
+                val calendarUri: Uri = CalendarContract.CONTENT_URI
+                    .buildUpon()
+                    .appendPath("time")
+                    .build()
+                startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+            }
+
+            R.id.profileFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_profileFragment)
+            }
+            R.id.helpFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_helpFragment)
+            }
+            R.id.feedbackFragment -> {
+                navController.navigate(R.id.action_mainFragment_to_feedbackFragment)
+            }
+            R.id.logoutFragment -> {
+                if (DatabaseManager.isGuest)
+                {
+                    val navMenu: Menu = drawerNavView.menu
+                    navMenu.findItem(R.id.logoutFragment).isVisible = false
+                }
+                else {
+                    val navMenu: Menu = drawerNavView.menu
+                    navMenu.findItem(R.id.logoutFragment).isVisible = true
+                    auth = Firebase.auth
+
+                    val currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        FirebaseAuth.getInstance().signOut()
+                        finish()
+                    }
+                }
+            }
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    private fun showBottomNav() {
+        bottomNavView.visibility = View.VISIBLE
+    }
+
+    private fun hideBottomNav() {
+        bottomNavView.visibility = View.GONE
+    }
+
+    private fun hideBottomNavItems() {
+        val navMenu: Menu = bottomNavView.menu
+        navMenu.findItem(R.id.profileFragment).isVisible = false
+    }
+
+    private fun hideDrawerMenuItems() {
+        val navMenu: Menu = drawerNavView.menu
+        navMenu.findItem(R.id.timetableFragment).isVisible = false
+        navMenu.findItem(R.id.profileFragment).isVisible = false
+        navMenu.findItem(R.id.logoutFragment).isVisible = false
+    }
+
+    override fun onSupportNavigateUp() : Boolean {
+        val navController = findNavController(R.id.fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.drawer_navigation_menu, menu)
+
+        val cal : BottomNavigationItemView = findViewById(R.id.calFragment)
+        cal.setOnClickListener {
+            val calendarUri: Uri = CalendarContract.CONTENT_URI
+                .buildUpon()
+                .appendPath("time")
+                .build()
+            startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+        }
+
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        return false
+    }
+
+    override fun onPicHasChanged(imgURL : String) {
+        Glide.with(this@MainActivity)
+            .load(imgURL)
+            .into(navUserProfile)
+    }
+}

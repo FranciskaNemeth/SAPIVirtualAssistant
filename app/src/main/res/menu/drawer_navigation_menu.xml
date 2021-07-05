@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/timetableFragment"
+            android:title="@string/orarend" />
+
+        <item
+            android:id="@+id/calendarFragment"
+            android:title="@string/naptar" />
+
+        <item
+            android:id="@+id/profileFragment"
+            android:title="@string/profil_szerkesztese" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/helpFragment"
+            android:title="@string/sugo" />
+
+        <item
+            android:id="@+id/feedbackFragment"
+            android:title="@string/visszajelzes" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/logoutFragment"
+            android:icon="@drawable/ic_baseline_logout_24"
+            android:title="@string/kijelentkezes" />
+    </group>
+</menu>
