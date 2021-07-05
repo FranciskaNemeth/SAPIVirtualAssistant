@@ -270,7 +270,7 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
             textToSpeechEngine.speak(responseProcessor.correctTextForSpeech(res), TextToSpeech.QUEUE_FLUSH, null, "tts1")
         }
     }
-    
+
     // On failure just log it
     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
         Log.e("WIT", "API call failed")
