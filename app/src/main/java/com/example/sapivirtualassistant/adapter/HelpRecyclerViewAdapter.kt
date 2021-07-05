@@ -27,7 +27,7 @@ class HelpRecyclerViewAdapter(dataSet: MutableList<HelpModel>) : RecyclerView.Ad
         return dataList.size
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { //, View.OnClickListener  {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var question: TextView
         var answer : TextView
         var parenLayout: ConstraintLayout
@@ -36,7 +36,6 @@ class HelpRecyclerViewAdapter(dataSet: MutableList<HelpModel>) : RecyclerView.Ad
             question = itemView.findViewById(R.id.textViewQuestion)
             answer = itemView.findViewById(R.id.textViewAnswer)
             parenLayout = itemView.findViewById(R.id.constraintLayoutHelpListitem)
-            //itemView.setOnClickListener(this)
         }
 
     }

@@ -3,12 +3,10 @@ package com.example.sapivirtualassistant.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.AlarmClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -90,7 +88,6 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
                     // Handle the back button event
                     if(auth.currentUser != null)
                     {
-                        //finish()
                         val a = Intent(Intent.ACTION_MAIN)
                         a.addCategory(Intent.CATEGORY_HOME)
                         a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -103,11 +100,9 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
-
-        // The callback can be enabled or disabled here or in handleOnBackPressed()
     }
 
-    @SuppressLint("ClickableViewAccessibility") // i don't know what's this
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -160,30 +155,22 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
                 textView?.setHint("")
                 imageView?.setImageResource(R.drawable.sapilogo)
             }
-            override fun onError(i: Int) {}
+            override fun onError(i: Int) {
+                imageView?.setImageResource(R.drawable.sapilogo)
+                Toast.makeText(requireActivity(), "Hiba történt a hangfelismerésnél! Próbáld újra vagy próbálkozz később.", Toast.LENGTH_LONG).show()
+            }
             override fun onResults(bundle: Bundle) {
                 imageView?.setImageResource(R.drawable.sapilogo)
                 val data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 var specialStr = data!![0].toLowerCase(locale)
 
-                // TODO: move this to the same place as the one below
                 specialStr = specialStr.replace("szabi", "Sapi")
-
-                //specialStr = "Szia, Sapi"
 
                 specialStr = specialStr.capitalize(locale)
 
                 textView?.text = specialStr
 
-                //textToSpeechEngine.speak(specialStr, TextToSpeech.QUEUE_FLUSH, null, "tts1")
-
                 witInterface.forTextMessage(specialStr).enqueue(this@MainFragment)
-
-                /*val str = data[0].toLowerCase(locale)
-                if (str == "helló" || str == "hello" || str == "hi" || str == "hallo" || str == "hali" || str == "szia")
-                {
-                    Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_profileFragment)
-                }*/
             }
 
             override fun onPartialResults(bundle: Bundle) {}
@@ -205,7 +192,6 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
                     speechRecognizer.startListening(speechRecognizerIntent)
                 }
                 else {
-                    //Toast.makeText(requireActivity(), "Kérlek, ellenőrizd az internet kapcsolatot!", Toast.LENGTH_LONG).show()
                     val alertDialogFragment : AlertDialogFragment = AlertDialogFragment()
                     alertDialogFragment.errorHandling(requireContext())
                 }
@@ -222,38 +208,8 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
             AlertDialogFragment().errorHandling(requireContext())
         }
 
-        /*if(!UtilsClass().isInternetAvailable()) {
-            AlertDialogFragment().errorHandling(requireContext())
-        }*/
-
         super.onResume()
     }
-
-    // a bug occurs here -> TODO: fix this bug
-    /*override fun onDestroy() {
-        super.onDestroy()
-        speechRecognizer!!.destroy()
-    }*/
-
-    // Custom method to launch an app
-    /*private fun launchApp(packageName: String) {
-        // Get an instance of PackageManager
-        val pm = requireContext().packageManager
-
-        // Initialize a new Intent
-        val intent:Intent? = pm.getLaunchIntentForPackage(packageName)
-
-        // Add category to intent
-        intent?.addCategory(Intent.CATEGORY_LAUNCHER)
-
-        // If intent is not null then launch the app
-        if(intent!=null){
-            requireContext().startActivity(intent)
-        }
-        else {
-            Toast.makeText(requireActivity(), "Hiba!", Toast.LENGTH_LONG).show()
-        }
-    }*/
 
     // if the permission is not granted
     private fun checkPermission() {
@@ -307,40 +263,14 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
         Log.d("WIT", "data: $data")
 
         val res = view?.let { responseProcessor.processWitResponse(data, requireContext(), it) }
-        // TODO: return written and spoken text too
         Log.d("WIT", "sorted: $res")
-
-        // TODO: change data for better utterence by robot
 
         if (res != null) {
             textView?.text = res
             textToSpeechEngine.speak(responseProcessor.correctTextForSpeech(res), TextToSpeech.QUEUE_FLUSH, null, "tts1")
         }
     }
-
-    /**
-     * JSONArray Extension function to get most confident object in it
-     *
-     * @return Most Confident JSONObject
-     */
-    private fun JSONArray.mostConfident(): JSONObject? {
-        var confidentObject: JSONObject? = null
-        var maxConfidence = 0.0
-        for (i in 0 until length()) {
-            try {
-                val obj = getJSONObject(i)
-                val currConfidence = obj.getDouble("confidence")
-                if (currConfidence > maxConfidence) {
-                    maxConfidence = currConfidence
-                    confidentObject = obj
-                }
-            } catch (e: JSONException) {
-                Log.e("WIT", "mostConfident: ", e)
-            }
-        }
-        return confidentObject
-    }
-
+    
     // On failure just log it
     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
         Log.e("WIT", "API call failed")

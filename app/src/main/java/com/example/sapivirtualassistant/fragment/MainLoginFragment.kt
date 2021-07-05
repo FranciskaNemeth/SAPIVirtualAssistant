@@ -39,8 +39,6 @@ class MainLoginFragment : Fragment() {
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
                     // Handle the back button event
-
-                    //finish()
                     val a = Intent(Intent.ACTION_MAIN)
                     a.addCategory(Intent.CATEGORY_HOME)
                     a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -48,8 +46,6 @@ class MainLoginFragment : Fragment() {
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
-
-        // The callback can be enabled or disabled here or in handleOnBackPressed()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -78,10 +74,6 @@ class MainLoginFragment : Fragment() {
         if( !UtilsClass().isNetworkAvailable(requireContext()) ) {
             AlertDialogFragment().errorHandling(requireContext())
         }
-
-        /*if(!UtilsClass().isInternetAvailable()) {
-            AlertDialogFragment().errorHandling(requireContext())
-        }*/
 
         super.onResume()
     }

@@ -50,10 +50,6 @@ class FeedbackFragment : Fragment() {
             AlertDialogFragment().errorHandling(requireContext())
         }
 
-        /*if(!UtilsClass().isInternetAvailable()) {
-            AlertDialogFragment().errorHandling(requireContext())
-        }*/
-
         super.onResume()
     }
 
