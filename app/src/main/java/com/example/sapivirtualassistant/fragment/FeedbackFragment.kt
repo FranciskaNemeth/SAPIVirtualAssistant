@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.database.DatabaseManager
 import com.example.sapivirtualassistant.model.FeedbackModel
+import com.example.sapivirtualassistant.utils.UtilsClass
 import com.google.android.material.textfield.TextInputEditText
 
 class FeedbackFragment : Fragment() {
@@ -42,6 +43,18 @@ class FeedbackFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        if( !UtilsClass().isNetworkAvailable(requireContext()) ) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }
+
+        /*if(!UtilsClass().isInternetAvailable()) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }*/
+
+        super.onResume()
     }
 
     private fun isValidEmail(email: String): Boolean {

@@ -32,6 +32,7 @@ import com.example.sapivirtualassistant.activity.LoginActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
 import com.example.sapivirtualassistant.interfaces.GetAppsInterface
 import com.example.sapivirtualassistant.interfaces.GetResponsesInterface
+import com.example.sapivirtualassistant.utils.UtilsClass
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -214,6 +215,18 @@ class MainFragment : Fragment(), Callback<ResponseBody> {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        if( !UtilsClass().isNetworkAvailable(requireContext()) ) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }
+
+        /*if(!UtilsClass().isInternetAvailable()) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }*/
+
+        super.onResume()
     }
 
     // a bug occurs here -> TODO: fix this bug

@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
 import com.example.sapivirtualassistant.activity.MainActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.utils.UtilsClass
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -72,6 +73,18 @@ class LoginFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        if( !UtilsClass().isNetworkAvailable(requireContext()) ) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }
+
+        /*if(!UtilsClass().isInternetAvailable()) {
+            AlertDialogFragment().errorHandling(requireContext())
+        }*/
+
+        super.onResume()
     }
 
     fun login(email : String, password : String) {
