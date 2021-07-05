@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.Navigation
+import com.example.sapivirtualassistant.database.DatabaseManager
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -229,6 +230,10 @@ class WitResponseProcessor(private val responseMap: Map<String, Map<String, List
     }
 
     private fun navigateScreens(trait: String?, context: Context, view: View) : Boolean {
+        if(DatabaseManager.isGuest && (trait == "profile" || trait == "timetable")) {
+            return false
+        }
+
         when (trait) {
             "profile" -> {
                 Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_profileFragment)
