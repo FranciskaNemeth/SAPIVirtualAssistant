@@ -3,14 +3,18 @@ package com.example.sapivirtualassistant.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.AlarmClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.text.method.ScrollingMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -22,21 +26,36 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import com.example.sapivirtualassistant.R
+import com.example.sapivirtualassistant.WitResponseProcessor
 import com.example.sapivirtualassistant.activity.LoginActivity
-import com.example.sapivirtualassistant.activity.MainActivity
 import com.example.sapivirtualassistant.database.DatabaseManager
+import com.example.sapivirtualassistant.interfaces.GetAppsInterface
+import com.example.sapivirtualassistant.interfaces.GetResponsesInterface
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import okhttp3.ResponseBody
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Query
 import java.util.*
 
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), Callback<ResponseBody> {
     private var textView: TextView? = null
     private var imageView: ImageView? = null
     lateinit var auth : FirebaseAuth
+    private lateinit var witInterface: WitInterface
+    private lateinit var responseProcessor: WitResponseProcessor
+    lateinit var appMutableMap: MutableMap<String, String>
 
     val locale = Locale("hun", "HU")
 
@@ -51,6 +70,13 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        witInterface = with(Retrofit.Builder()) {
+            baseUrl("https://api.wit.ai/")
+            with(build()) {
+                create(WitInterface::class.java)
+            }
+        }
 
         auth = Firebase.auth
 
@@ -96,6 +122,21 @@ class MainFragment : Fragment() {
         textView = view.findViewById(R.id.textViewAnswer)
         imageView = view.findViewById(R.id.kabala)
 
+        textView?.movementMethod = ScrollingMovementMethod()
+
+        DatabaseManager.getWitResponses(object : GetResponsesInterface {
+            override fun getResponses(responseMap: Map<String, Map<String, List<String>>>) {
+                responseProcessor = WitResponseProcessor(responseMap)
+            }
+
+        })
+
+        DatabaseManager.getApps(object : GetAppsInterface {
+            override fun getApps(appsList: MutableMap<String, String>) {
+                appMutableMap = appsList
+            }
+        })
+
         // initializing the SpeechRecognizer object and creating the intent for recognizing the speech
         val speechRecognizer : SpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireActivity())
         val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -108,32 +149,40 @@ class MainFragment : Fragment() {
             override fun onReadyForSpeech(bundle: Bundle) {}
             override fun onBeginningOfSpeech() {
                 textView?.setText("")
-                textView?.setHint("Listening...")
+                textView?.setHint("Hallgatlak...")
             }
 
             override fun onRmsChanged(v: Float) {}
             override fun onBufferReceived(bytes: ByteArray) {}
-            override fun onEndOfSpeech() {}
+            override fun onEndOfSpeech() {
+                textView?.setText("")
+                textView?.setHint("")
+                imageView?.setImageResource(R.drawable.sapilogo)
+            }
             override fun onError(i: Int) {}
             override fun onResults(bundle: Bundle) {
                 imageView?.setImageResource(R.drawable.sapilogo)
                 val data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                val specialStr = data!![0].toLowerCase(locale)
-                if(specialStr == "szia szabi")
-                {
-                    textView?.text = "Szia Sapi"
-                }
-                else
-                {
-                    textView?.text = data[0]
+                var specialStr = data!![0].toLowerCase(locale)
 
-                    textToSpeechEngine.speak(data[0], TextToSpeech.QUEUE_FLUSH, null, "tts1")
-                }
-                val str = data[0].toLowerCase(locale)
+                // TODO: move this to the same place as the one below
+                specialStr = specialStr.replace("szabi", "Sapi")
+
+                //specialStr = "Szia, Sapi"
+
+                specialStr = specialStr.capitalize(locale)
+
+                textView?.text = specialStr
+
+                //textToSpeechEngine.speak(specialStr, TextToSpeech.QUEUE_FLUSH, null, "tts1")
+
+                witInterface.forTextMessage(specialStr).enqueue(this@MainFragment)
+
+                /*val str = data[0].toLowerCase(locale)
                 if (str == "helló" || str == "hello" || str == "hi" || str == "hallo" || str == "hali" || str == "szia")
                 {
                     Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_profileFragment)
-                }
+                }*/
             }
 
             override fun onPartialResults(bundle: Bundle) {}
@@ -145,8 +194,21 @@ class MainFragment : Fragment() {
                 speechRecognizer.stopListening()
             }
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                imageView?.setImageResource(R.drawable.sapilogo_hatter)
-                speechRecognizer.startListening(speechRecognizerIntent)
+                if (!responseProcessor.responseManagerIsInitialized()) {
+                    responseProcessor.setAppList(appMutableMap)
+                }
+
+                if (DatabaseManager.responseMapIsInitialized() && DatabaseManager.responseMap.isNotEmpty()) {
+                    Log.d("RES", "${DatabaseManager.responseMap}")
+                    imageView?.setImageResource(R.drawable.sapilogo_hatter)
+                    speechRecognizer.startListening(speechRecognizerIntent)
+                }
+                else {
+                    //Toast.makeText(requireActivity(), "Kérlek, ellenőrizd az internet kapcsolatot!", Toast.LENGTH_LONG).show()
+                    val alertDialogFragment : AlertDialogFragment = AlertDialogFragment()
+                    alertDialogFragment.errorHandling(requireContext())
+                }
+
             }
             false
         }
@@ -158,6 +220,26 @@ class MainFragment : Fragment() {
     /*override fun onDestroy() {
         super.onDestroy()
         speechRecognizer!!.destroy()
+    }*/
+
+    // Custom method to launch an app
+    /*private fun launchApp(packageName: String) {
+        // Get an instance of PackageManager
+        val pm = requireContext().packageManager
+
+        // Initialize a new Intent
+        val intent:Intent? = pm.getLaunchIntentForPackage(packageName)
+
+        // Add category to intent
+        intent?.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        // If intent is not null then launch the app
+        if(intent!=null){
+            requireContext().startActivity(intent)
+        }
+        else {
+            Toast.makeText(requireActivity(), "Hiba!", Toast.LENGTH_LONG).show()
+        }
     }*/
 
     // if the permission is not granted
@@ -188,5 +270,66 @@ class MainFragment : Fragment() {
 
     companion object {
         const val RecordAudioRequestCode = 1
+
+        /**
+         * Client Access Token of Wit.ai App
+         */
+        private const val CLIENT_ACCESS_TOKEN = "PZT3GXMUFCGPRW4Y67SEJMFS4WK7LDRV"
+    }
+
+    interface WitInterface {
+        @Headers("Authorization: Bearer $CLIENT_ACCESS_TOKEN")
+        @GET("/message")
+        fun forTextMessage(
+            @Query(value = "q") message: String,
+            @Query(value = "v") version: String = "20200513"
+        ): Call<ResponseBody>
+    }
+
+    // Handles response from Wit.ai App
+    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        if (response.body() == null) return
+        // get the JSON Object sent by Wit.ai
+        val data = JSONObject(response.body()!!.string())
+        Log.d("WIT", "data: $data")
+
+        val res = view?.let { responseProcessor.processWitResponse(data, requireContext(), it) }
+        // TODO: return written and spoken text too
+        Log.d("WIT", "sorted: $res")
+
+        // TODO: change data for better utterence by robot
+
+        if (res != null) {
+            textView?.text = res
+            textToSpeechEngine.speak(responseProcessor.correctTextForSpeech(res), TextToSpeech.QUEUE_FLUSH, null, "tts1")
+        }
+    }
+
+    /**
+     * JSONArray Extension function to get most confident object in it
+     *
+     * @return Most Confident JSONObject
+     */
+    private fun JSONArray.mostConfident(): JSONObject? {
+        var confidentObject: JSONObject? = null
+        var maxConfidence = 0.0
+        for (i in 0 until length()) {
+            try {
+                val obj = getJSONObject(i)
+                val currConfidence = obj.getDouble("confidence")
+                if (currConfidence > maxConfidence) {
+                    maxConfidence = currConfidence
+                    confidentObject = obj
+                }
+            } catch (e: JSONException) {
+                Log.e("WIT", "mostConfident: ", e)
+            }
+        }
+        return confidentObject
+    }
+
+    // On failure just log it
+    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        Log.e("WIT", "API call failed")
     }
 }
